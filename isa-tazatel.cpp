@@ -18,6 +18,9 @@
 #include <unistd.h> // getopt
 #include<err.h>
 #include <string>
+#include <iostream>
+#include <regex>
+
 using namespace std;    // Or using std::string;
 //#include <getopt.h> // for getopt_long
 #define BUFFER 65535
@@ -28,6 +31,20 @@ void print_usage()
     printf("-d <IP|hostname DNS serveru>, ktorý bude dotazovaný, nepovinny argument pričom implicitne sa bere 1.1.1.1\n");
     exit(2);
 }
+
+void PrintRegexMatch(std::string str, std::regex reg)
+{
+    std::smatch match;
+    //std::cout << std::boolalpha;
+    while(std::regex_search(str,match,reg))
+    {
+
+        std::cout << match.str() << "\n";
+        str = match.suffix().str();
+
+    }
+}
+
 int main(int argc, char **argv) {
     int option;
     int client_socket, port_number, bytenasend, byteread;
@@ -43,6 +60,16 @@ int main(int argc, char **argv) {
     char hostname[100], whois[100], dns[100];
     char buf[BUFFER];
     int msg_size;
+    int i = 0;
+    string input;
+    std::regex inetnumReg("inetnum:.*");
+    std::regex netnameReg("netname:.*");
+    std::regex descrReg("descr:.*");
+    std::regex countryReg("country:.*");
+    std::regex addressReg("address:.*");
+    std::regex phoneReg("phone:.*");
+    std::regex admin_cReg("admin-c:.*");
+//    std::cmatch m;
 
     while ((option = getopt(argc, argv, "q:w:d:")) != -1){
        switch (option) {
@@ -107,85 +134,60 @@ int main(int argc, char **argv) {
      memset(&klient_adress,0,sizeof(klient_adress));  //nastavy dany pocet bytov na hodnotu uvedenu v parametri c
      klient_adress.sin_family = AF_INET; /* IPV4*/
      memcpy(&klient_adress.sin_addr,he->h_addr,he->h_length); // porovnava retazec bytov , kopiruje specifikovany pocet bytov do cielovej struktury
-     printf("CLIENT ADRESS \t: \t%s \n", inet_ntoa(klient_adress.sin_addr));
+     printf("CLIENT ADRESS \t: \t%s \n\n", inet_ntoa(klient_adress.sin_addr));
      char *daco = (char*)malloc(sizeof(char) * 1024);
      strcpy(daco,inet_ntoa(klient_adress.sin_addr));
-     printf("hahaha %s\n",daco);
+
     /* Vytvoreni soketu a inicializovanie soketu*/
     if ((client_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) <= 0) /*AF_INET = IPv4, SOCK_STREAM = TCP, 0 je protokol 0 implicitne vybere podla SOCK_STREAM, inak IPPROTO_TCP*/
     {
         perror("ERROR: socket");
         exit(EXIT_FAILURE);
     }
-    else
-    {
-        printf("SOcket vytvoreny\n");
-    }
+
     /*Aktivne otvorenie na strane klienta, druhy parameter funkcie obsahuje ip adresu a port servera*/
     if (connect(client_socket, (const struct sockaddr *) &server_address, sizeof(server_address)) != 0)
     {
         perror("ERROR: connect");
         exit(EXIT_FAILURE);
     }
-    else
-    {
-        printf("Si pripojeny\n");
 
-
-    }
     /* odeslani zpravy na server */
 
-    
-    bytenasend = send(client_socket, buf, strlen(buf), 0);
-    if (bytenasend < 0)
-    {
-        perror("ERROR in sendto\n");
+    strcat(daco,"\n");
+    strcpy(buf,daco);
+    while(i < 2)
+     {
+        /* code */
+        bytenasend = send(client_socket, buf, strlen(buf), 0);
+        if (bytenasend < 0)
+        {
+            perror("ERROR in sendto\n");
+        }
 
+    // I have this block of code from example , author is Mr. Matouska
+        if ((byteread = read(client_socket,buf,BUFFER)) == -1){  // read an initial string
+            err(1,"initial read() failed");
+        } else {
+
+        }
+        i++;
     }
-    else
-    {
-        printf("hahaha juuu %s\n",daco);
-        printf("Poslalo sa\n");
 
-    }
+    //    printf("%.*s\n",byteread,buf);
+        input = buf;
+        cout << input;
+        cout << "====== WHOIS ===========\n";
+        PrintRegexMatch(input,inetnumReg);
+        PrintRegexMatch(input,netnameReg);
+        PrintRegexMatch(input,descrReg);
+        PrintRegexMatch(input,countryReg);
+        PrintRegexMatch(input,admin_cReg);
+        PrintRegexMatch(input,addressReg);
+        PrintRegexMatch(input,phoneReg);
 
-// I have this block of code from example , author is Mr. Matouska
-    if ((byteread = read(client_socket,buf,BUFFER)) == -1){  // read an initial string
-        err(1,"initial read() failed");
-    } else {
-        printf("%.*s\n",byteread,buf);
-    }
-    while((msg_size=read(STDIN_FILENO,buf,BUFFER)) > 0)
-  {
-    byteread = write(client_socket,buf,msg_size);             // send data to the server
-    if (byteread == -1)                                 // check if data was sent correctly
-      err(1,"write() failed");
-    else if (byteread != msg_size)
-      err(1,"write(): buffer written partially");
-
-    if ((byteread = read(client_socket,buf, BUFFER)) == -1)   // read the answer from the server
-      err(1,"read() failed");
-    else if (byteread > 0)
-      printf("%.*s",byteread,buf);
-
-  }
-
-  if (msg_size == -1)
-    err(1,"reading failed");
-
-/*
-  while(byteread = recv(client_socket, buf, BUFFER, 0))
-  {
-
-
-  if (byteread < 0)
-  perror("ERROR in recvfrom");
-
-  printf("Echo from server: %s\n", buf);
-  //service(STDIN_FILEN0, client_socket);
-}*/
    close(client_socket);
-   printf("* Closing client socket ...\n");
+   printf("\n\n* Closing client socket ...\n");
    free(daco);
   return 0;
 }
