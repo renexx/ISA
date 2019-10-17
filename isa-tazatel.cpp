@@ -20,10 +20,14 @@
 #include <string>
 #include <iostream>
 #include <regex>
+#include <arpa/nameser.h>
+
+#include <resolv.h>
 
 using namespace std;    // Or using std::string;
 //#include <getopt.h> // for getopt_long
 #define BUFFER 65535
+#define N 4096
 void print_usage()
 {
     printf("-q<IP|hostname>, povinny argument\n");
@@ -53,6 +57,7 @@ int main(int argc, char **argv) {
     struct hostent *hostent, *he;
     struct servent *servent;
     struct sockaddr_in server_address, klient_adress;
+    struct sockaddr_in6 ipv6;
     extern char *optarg;
     bool q_flag = false;
     bool w_flag = false;
@@ -61,6 +66,14 @@ int main(int argc, char **argv) {
     char buf[BUFFER];
     int msg_size;
     int i = 0;
+    u_char nsbuf[N];
+    char dispbuf[N];
+    ns_msg msg;
+    ns_rr rr;
+    int x, l;
+
+
+
     string input;
     std::regex inetnumReg("inetnum:.*");
     std::regex netnameReg("netname:.*");
@@ -71,6 +84,11 @@ int main(int argc, char **argv) {
     std::regex admin_cReg("admin-c:.*");
 //    std::cmatch m;
 
+    if(argc < 5 || argc > 7)
+    {
+        fprintf(stderr, "Error arguments\n");
+        print_usage();
+    }
     while ((option = getopt(argc, argv, "q:w:d:")) != -1){
        switch (option) {
            case 'q':
@@ -134,9 +152,90 @@ int main(int argc, char **argv) {
      memset(&klient_adress,0,sizeof(klient_adress));  //nastavy dany pocet bytov na hodnotu uvedenu v parametri c
      klient_adress.sin_family = AF_INET; /* IPV4*/
      memcpy(&klient_adress.sin_addr,he->h_addr,he->h_length); // porovnava retazec bytov , kopiruje specifikovany pocet bytov do cielovej struktury
-     printf("CLIENT ADRESS \t: \t%s \n\n", inet_ntoa(klient_adress.sin_addr));
+
+     // HEADER
+        cout << "======== DNS:\t" << dns << "=============\n";
+ // -----
+        l = res_query(hostname,ns_c_any,ns_t_aaaa,nsbuf,sizeof(nsbuf));
+        if(l < 0)
+        {
+            perror(hostname);
+        }
+        ns_initparse(nsbuf,l,&msg);
+        //l= ns_msg_count(msg,ns_s_an);
+        ns_parserr(&msg, ns_s_an, i, &rr);
+        ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
+        printf("%s \n", dispbuf);
+
+
+        l = res_query(hostname,ns_c_any,ns_t_a,nsbuf,sizeof(nsbuf));
+        if(l < 0)
+        {
+            perror(hostname);
+        }
+        ns_initparse(nsbuf,l,&msg);
+        //l= ns_msg_count(msg,ns_s_an);
+        ns_parserr(&msg, ns_s_an, i, &rr);
+        ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
+        printf("\n%s \n", dispbuf);
+
+        l = res_query(hostname,ns_c_any,ns_t_mx,nsbuf,sizeof(nsbuf));
+        if(l < 0)
+        {
+            perror(hostname);
+        }
+        ns_initparse(nsbuf,l,&msg);
+        //l= ns_msg_count(msg,ns_s_an);
+        ns_parserr(&msg, ns_s_an, i, &rr);
+        ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
+        printf("%s \n", dispbuf);
+
+        l = res_query(hostname,ns_c_any,ns_t_cname,nsbuf,sizeof(nsbuf));
+        if(l < 0)
+        {
+            perror(hostname);
+        }
+        ns_initparse(nsbuf,l,&msg);
+        //l= ns_msg_count(msg,ns_s_an);
+        ns_parserr(&msg, ns_s_an, i, &rr);
+        ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
+        printf("toto je cname%s, a toto je name %s \n", dispbuf, ns_rr_name());
+
+        /*printf("NS:");
+           l = res_query(hostname, ns_c_any, ns_t_ns, nsbuf, sizeof(nsbuf));
+           if (l < 0)
+           {
+             perror(hostname);
+           }
+           ns_initparse(nsbuf, l, &msg);
+           l = ns_msg_count(msg, ns_s_an);
+
+           ns_parserr(&msg, ns_s_an, 0, &rr);
+           ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
+           printf("%s \n", dispbuf);
+*/
+
+
+
+
+    // printf("A: \t%s \n", inet_ntoa(klient_adress.sin_addr));
+
+     //printf("CNAME: %s\n",he->h_name);
+
      char *daco = (char*)malloc(sizeof(char) * 1024);
      strcpy(daco,inet_ntoa(klient_adress.sin_addr));
+
+     memset(&ipv6,0,sizeof(ipv6));  //nastavy dany pocet bytov na hodnotu uvedenu v parametri c
+     ipv6.sin6_family = AF_INET6; /* IPV4*/
+     memcpy(&ipv6.sin6_addr,he->h_addr,he->h_length); // porovnava retazec bytov , kopiruje specifikovany pocet bytov do cielovej struktury
+//     inet_pton(AF_INET6, hostname, &(ipv6.sin6_addr));
+
+     char str[INET6_ADDRSTRLEN];
+
+    // str = hostname;
+     inet_ntop(AF_INET6,&ipv6.sin6_addr,str,sizeof(str));
+    // cout << "AAAA:\t" <<str << "\n";
+
 
     /* Vytvoreni soketu a inicializovanie soketu*/
     if ((client_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) <= 0) /*AF_INET = IPv4, SOCK_STREAM = TCP, 0 je protokol 0 implicitne vybere podla SOCK_STREAM, inak IPPROTO_TCP*/
@@ -176,7 +275,7 @@ int main(int argc, char **argv) {
 
     //    printf("%.*s\n",byteread,buf);
         input = buf;
-        cout << input;
+
         cout << "====== WHOIS ===========\n";
         PrintRegexMatch(input,inetnumReg);
         PrintRegexMatch(input,netnameReg);
