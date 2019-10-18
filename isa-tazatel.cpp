@@ -71,8 +71,8 @@ int main(int argc, char **argv) {
     ns_msg msg;
     ns_rr rr;
     int x, l;
-
-
+    struct addrinfo hints, *infoptr;
+    int result;
 
     string input;
     std::regex inetnumReg("inetnum:.*");
@@ -131,29 +131,34 @@ int main(int argc, char **argv) {
 
      /* 2. ziskani adresy serveru pomoci DNS  ziska IP adresu z domeny dotazuje sa na DNS zaznam A*/
 
-    if ((hostent = gethostbyname(whois)) == NULL){
-        fprintf(stderr, "Error: no such host as %s\n", whois);
-        exit(EXIT_FAILURE);
-    }
-     printf("\nWHOIS SERVER  \t: \t%s\n",whois);
-
-     memset(&server_address,0,sizeof(server_address));  //nastavy dany pocet bytov na hodnotu uvedenu v parametri c
-     server_address.sin_family = AF_INET; /* IPV4*/
-     memcpy(&server_address.sin_addr,hostent->h_addr,hostent->h_length); // porovnava retazec bytov , kopiruje specifikovany pocet bytov do cielovej struktury
-     server_address.sin_port = htons(43); /*host to network byte order short*/
-     printf("SERVER ADRESS \t: \t%s \n", inet_ntoa(server_address.sin_addr)); // ten co zadam ako argument
 
 
-    if ((he = gethostbyname(hostname)) == NULL){
-        fprintf(stderr, "Error: no such host as %s\n", hostname);
-        exit(EXIT_FAILURE);
-    }
-     printf("CLIENT ADRESS \t: \t%s\n",hostname);
-     memset(&klient_adress,0,sizeof(klient_adress));  //nastavy dany pocet bytov na hodnotu uvedenu v parametri c
-     klient_adress.sin_family = AF_INET; /* IPV4*/
+
+     memset(&hints,0,sizeof(hints));  //nastavy dany pocet bytov na hodnotu uvedenu v parametri c
+     hints.ai_family = AF_UNSPEC;
+     hints.ai_socktype = SOCK_STREAM;
+     hints.ai_protocol = IPPROTO_TCP;
+
+     result = getaddrinfo(whois,"43",&hints,&infoptr);
+     if(result != 0)
+     {
+         fprintf(stderr, "%s: %s\n", whois, gai_strerror(result));
+         exit(EXIT_FAILURE);
+     }
+     cout <<"WHOIS DOMEN NAME:\t " << whois << "\n";
+     struct addrinfo *p;
+     for(p = infoptr;p != NULL; p = p->ai_next)
+     {
+         getnameinfo(p->ai_addr,p->ai_addrlen,whois,sizeof(whois),NULL,0,NI_NUMERICHOST);
+         cout << "WHOIS IP ADRESS:\t" << whois << "\n";
+     }
+     freeaddrinfo(infoptr);
+     return 0;
+
+
      memcpy(&klient_adress.sin_addr,he->h_addr,he->h_length); // porovnava retazec bytov , kopiruje specifikovany pocet bytov do cielovej struktury
 
-     // HEADER
+    /* // HEADER
         cout << "======== DNS:\t" << dns << "=============\n";
  // -----
         l = res_query(hostname,ns_c_any,ns_t_aaaa,nsbuf,sizeof(nsbuf));
@@ -197,9 +202,9 @@ int main(int argc, char **argv) {
         }
         ns_initparse(nsbuf,l,&msg);
         //l= ns_msg_count(msg,ns_s_an);
-        ns_parserr(&msg, ns_s_an, i, &rr);
-        ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
-        printf("toto je cname%s, a toto je name %s \n", dispbuf, ns_rr_name());
+        //ns_parserr(&msg, ns_s_an, i, &rr);
+        //ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
+        //rintf("toto je cname%s, a toto je name %s \n", dispbuf, ns_rr_name());
 
         /*printf("NS:");
            l = res_query(hostname, ns_c_any, ns_t_ns, nsbuf, sizeof(nsbuf));
