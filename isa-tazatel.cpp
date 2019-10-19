@@ -48,17 +48,71 @@ void PrintRegexMatch(std::string str, std::regex reg)
         str = match.suffix().str();
     }
 }
+std::string getHostname(const char *domName)
+{
+    struct sockaddr_in server_address, klient_adress;
+    memset(&klient_adress, 0, sizeof klient_adress);
+    klient_adress.sin_family = AF_INET;
+    char domain_name[100];
+    strcpy(domain_name,domName);
+    memset(&klient_adress, 0, sizeof klient_adress);
+    klient_adress.sin_family = AF_INET;
 
 
+    inet_pton(AF_INET, domain_name, &klient_adress.sin_addr);
+
+    int result = getnameinfo((struct sockaddr*)&klient_adress,sizeof(klient_adress),domain_name,sizeof(domain_name),NULL,0,NI_NAMEREQD);
+    if(result)
+    {
+        fprintf(stderr, "65 vo funkci getHostname %s: %s\n", domain_name, gai_strerror(result));
+
+    //    exit(EXIT_FAILURE);
+    }
+    else
+    {
+
+        printf("DOMAIN NAME: %s\n", domain_name);    // e.g. "www.example.com"
+    }
+    std::string ip;
+    ip += domain_name;
+    return ip;
+
+}
+void runDnsQuery(const char *dname, int nType)
+{
+
+    u_char nsbuf[N];
+    char dispbuf[N];
+    ns_msg msg;
+    ns_rr rr;
+
+    int x = 0, l;
+    int msg_size;
+// HEADER
+
+    l = res_query(dname,ns_c_any,nType,nsbuf,sizeof(nsbuf));
+    if(l < 0)
+    {
+        perror("kurva 103");
+    }
+    ns_initparse(nsbuf,l,&msg);
+        //l= ns_msg_count(msg,ns_s_an);
+    ns_parserr(&msg, ns_s_an, x, &rr);
+    ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
+    printf("%s \n", dispbuf);
+
+
+    // return 0;
+}
 
 int main(int argc, char **argv) {
     int option;
     int client_socket, port_number, bytenasend, byteread;
     socklen_t len;
     const char *addr;
-    struct hostent *hostent, *he;
+
     struct servent *servent;
-    struct sockaddr_in server_address, klient_adress;
+
     struct sockaddr_in6 ipv6;
     extern char *optarg;
     bool q_flag = false;
@@ -67,14 +121,9 @@ int main(int argc, char **argv) {
     char hostname[100], whois[100], dns[100];
 
     char buf[BUFFER];
-    int msg_size;
+
     int i = 0;
-    u_char pResAnswer[lanswer], Uncompressed[ldname];
-    //char dispbuf[N];
-    ns_msg msg;
-    ns_rr rr;
-    const u_char *p;
-    int x, l,nResAnswerLen;
+
     struct addrinfo whois_server, *whois_infoptr, *whois_ptr, client_adress, *client_infoptr, *client_ptr;
     int result_for_whois, result_for_client;
 
@@ -132,34 +181,21 @@ int main(int argc, char **argv) {
                    print_usage();
        }
    }
-   // HEADER
-         cout << "======== DNS:\t" << dns << "=============\n";
-         if(nResAnswerLen = (res_search(hostname,ns_c_in,ns_s_an,pResAnswer,lanswer)) < 0)
-         {
-             fprintf(stderr, "ERROR tu\n");
-             exit(EXIT_FAILURE);
-         }
-         if(ns_initparse(pResAnswer,l,&msg))
-         {
-             fprintf(stderr, "ERROR nie tu\n");
-             exit(EXIT_FAILURE);
-         }
-         for(x = 0; x < ns_msg_count(msg,ns_s_an); x++)
-         {
-             if(ns_parserr(&msg,ns_s_an,x,&rr) < 0)
-             {
-                 fprintf(stderr, "ERROR\n");
-                 exit(EXIT_FAILURE);
-             }
-             switch(ns_rr_type(rr))
-             {
-                 case ns_t_a:
-                    cout << "A" << ns_rr_name(rr);
-                    p = ns_rr_rdata(rr);
-             }
-         }
+
+cout << "======== DNS:\t" << dns << "=============\n";
 
 
+    std::string result = getHostname(hostname);
+
+    const char *ip = result.c_str();
+
+    runDnsQuery(ip,ns_t_aaaa);
+    runDnsQuery(ip,ns_t_a);
+    runDnsQuery(ip,ns_t_mx);
+    runDnsQuery(ip,ns_t_ptr);
+    runDnsQuery(ip,ns_t_cname);
+    runDnsQuery(ip,ns_t_soa);
+    runDnsQuery(ip,ns_t_ns);
 
      /* 2. ziskani adresy serveru pomoci DNS  ziska IP adresu z domeny dotazuje sa na DNS zaznam A*/
 
@@ -174,23 +210,21 @@ int main(int argc, char **argv) {
          fprintf(stderr, "%s: %s\n", whois, gai_strerror(result_for_whois));
          exit(EXIT_FAILURE);
      }
-     cout <<"WHOIS DOMEN NAME:\t " << whois << "\n";
 
      for(whois_ptr = whois_infoptr; whois_ptr != NULL; whois_ptr = whois_ptr->ai_next)
      {
          getnameinfo(whois_ptr->ai_addr,whois_ptr->ai_addrlen,whois,sizeof(whois),NULL,0,NI_NUMERICHOST);
-
          /* Vytvoreni soketu a inicializovanie soketu*/
          if ((client_socket = socket(whois_infoptr->ai_family, whois_infoptr->ai_socktype, whois_infoptr->ai_protocol)) <= 0) /*AF_INET = IPv4, SOCK_STREAM = TCP, 0 je protokol 0 implicitne vybere podla SOCK_STREAM, inak IPPROTO_TCP*/
          {
-             perror("ERROR: socket");
+             perror("ERROR 224: socket");
              exit(EXIT_FAILURE);
          }
 
          /*Aktivne otvorenie na strane klienta, druhy parameter funkcie obsahuje ip adresu a port servera*/
          if (connect(client_socket, whois_ptr->ai_addr, whois_ptr->ai_addrlen) != 0)
          {
-             perror("ERROR: connect");
+             perror("ERROR 231: connect");
              exit(EXIT_FAILURE);
          }
      }
@@ -207,14 +241,18 @@ int main(int argc, char **argv) {
          fprintf(stderr, "%s: %s\n", hostname, gai_strerror(result_for_client));
          exit(EXIT_FAILURE);
      }
-     cout <<"CLIENT DOMEN NAME:\t " << hostname << "\n";
      for(client_ptr = client_infoptr; client_ptr != NULL; client_ptr = client_ptr->ai_next)
      {
          getnameinfo(client_ptr->ai_addr,client_ptr->ai_addrlen,hostname,sizeof(hostname),NULL,0,NI_NUMERICHOST);
-         cout <<"CLIENT IP ADDRESS:\t " << hostname << "\n";
-     }
 
+     }
+    /* inet_pton(AF_INET, hostname, &klient_adress);
+     he = gethostbyaddr(&klient_adress, sizeof(klient_adress),AF_INET);
+     printf("Host name: %s\n", he->h_name);*/
+     getHostname(hostname);
+     getHostname(whois);
     /* odeslani zpravy na server */
+
 
     strcat(hostname,"\n");
     cout << hostname;
@@ -225,7 +263,7 @@ int main(int argc, char **argv) {
         bytenasend = send(client_socket, buf, strlen(buf), 0);
         if (bytenasend < 0)
         {
-            perror("ERROR in sendto\n");
+            perror("ERROR in sendto 270\n");
         }
 
     // I have this block of code from example , author is Mr. Matouska
