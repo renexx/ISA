@@ -47,6 +47,7 @@ void PrintRegexMatch(std::string str, std::regex reg)
         std::cout << match.str() << "\n";
         str = match.suffix().str();
     }
+
 }
 std::string getHostname(const char *domName)
 {
@@ -88,9 +89,17 @@ void runDnsQuery(const char *dname, int nType)
 
     int x = 0, l;
     int msg_size;
+
+
+    std::regex a_dns("A.*");
+    std::regex aaaa_dns("AAAA.*");
+    std::regex soa_dns("SOA.*");
+    std::regex mx_dns("MX.*");
+    std::regex ns_dns("NS.*");
+    std::regex ptr_dns("A.*");
+    std::regex cname_dns("CNAME.*");
 // HEADER
-    RES_DEFNAMES;
-    RES_DNSRCH;
+
     l = res_search(dname,ns_c_any,nType,nsbuf,sizeof(nsbuf));
     if(l < 0)
     {
@@ -101,6 +110,14 @@ void runDnsQuery(const char *dname, int nType)
     ns_parserr(&msg, ns_s_an, x, &rr);
     ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
     printf("%s \n", dispbuf);
+/*    PrintRegexMatch(dispbuf,a_dns);
+    PrintRegexMatch(dispbuf,mx_dns);
+    PrintRegexMatch(dispbuf,soa_dns);
+    PrintRegexMatch(dispbuf,ns_dns);
+    PrintRegexMatch(dispbuf,ptr_dns);
+    PrintRegexMatch(dispbuf,cname_dns);*/
+
+
 
 
     // return 0;
@@ -136,6 +153,7 @@ int main(int argc, char **argv) {
     std::regex addressReg("address:.*");
     std::regex phoneReg("phone:.*");
     std::regex admin_cReg("admin-c:.*");
+
 //    std::cmatch m;
 
     if(argc < 5 || argc > 7)
@@ -189,13 +207,26 @@ cout << "======== DNS:\t" << dns << "=============\n";
     std::string result = getHostname(hostname);
 
     const char *ip = result.c_str();
-
+    cout << "TOTO JE SOA \n";
     runDnsQuery(ip,ns_t_soa);
+
+    cout << "\nTOTO JE AAAAA \n";
     runDnsQuery(ip,ns_t_aaaa);
+    cout << "\nTOTO JE A \n";
     runDnsQuery(ip,ns_t_a);
+    cout << "HLUPAAAK" << ip;
+
+
+
+
+    cout <<"KDE SOM" << ip;
+    cout << "\nTOTO JE PTR \n";
     runDnsQuery(ip,ns_t_ptr);
+    cout << "\nTOTO JE CNAME \n";
     runDnsQuery(ip,ns_t_cname);
+    cout << "\nTOTO JE NS \n";
     runDnsQuery(ip,ns_t_ns);
+    cout << "\nTOTO JE MX \n";
     runDnsQuery(ip,ns_t_mx);
 
 
