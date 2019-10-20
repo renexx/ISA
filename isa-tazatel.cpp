@@ -66,7 +66,7 @@ std::string getHostname(const char *domName)
     {
         fprintf(stderr, "65 vo funkci getHostname %s: %s\n", domain_name, gai_strerror(result));
 
-    //    exit(EXIT_FAILURE);
+    //    exit(EXIT_FAILURE); TU JE ODSTREANENY EXIT LEBO TO POTOM NEFUNGUJE AK ZADAS domenu
     }
     else
     {
@@ -89,14 +89,15 @@ void runDnsQuery(const char *dname, int nType)
     int x = 0, l;
     int msg_size;
 // HEADER
-
-    l = res_query(dname,ns_c_any,nType,nsbuf,sizeof(nsbuf));
+    RES_DEFNAMES;
+    RES_DNSRCH;
+    l = res_search(dname,ns_c_any,nType,nsbuf,sizeof(nsbuf));
     if(l < 0)
     {
         perror("kurva 103");
     }
     ns_initparse(nsbuf,l,&msg);
-        //l= ns_msg_count(msg,ns_s_an);
+    //l= ns_msg_count(msg,ns_s_an);
     ns_parserr(&msg, ns_s_an, x, &rr);
     ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
     printf("%s \n", dispbuf);
@@ -123,7 +124,7 @@ int main(int argc, char **argv) {
     char buf[BUFFER];
 
     int i = 0;
-
+    int msg_size;
     struct addrinfo whois_server, *whois_infoptr, *whois_ptr, client_adress, *client_infoptr, *client_ptr;
     int result_for_whois, result_for_client;
 
@@ -189,13 +190,16 @@ cout << "======== DNS:\t" << dns << "=============\n";
 
     const char *ip = result.c_str();
 
+    runDnsQuery(ip,ns_t_soa);
     runDnsQuery(ip,ns_t_aaaa);
     runDnsQuery(ip,ns_t_a);
-    runDnsQuery(ip,ns_t_mx);
     runDnsQuery(ip,ns_t_ptr);
     runDnsQuery(ip,ns_t_cname);
-    runDnsQuery(ip,ns_t_soa);
     runDnsQuery(ip,ns_t_ns);
+    runDnsQuery(ip,ns_t_mx);
+
+
+
 
      /* 2. ziskani adresy serveru pomoci DNS  ziska IP adresu z domeny dotazuje sa na DNS zaznam A*/
 
@@ -254,28 +258,21 @@ cout << "======== DNS:\t" << dns << "=============\n";
     /* odeslani zpravy na server */
 
 
-    strcat(hostname,"\n");
-    cout << hostname;
     strcpy(buf,hostname);
-    while(i < 2)
-     {
-        /* code */
-        bytenasend = send(client_socket, buf, strlen(buf), 0);
-        if (bytenasend < 0)
-        {
-            perror("ERROR in sendto 270\n");
-        }
+    strcat(buf,"\r\n");//<CR><LF>
+    cout << buf;
 
-    // I have this block of code from example , author is Mr. Matouska
-        if ((byteread = read(client_socket,buf,BUFFER)) == -1){  // read an initial string
-            err(1,"initial read() failed");
-        } else {
-
-        }
-        i++;
+    bytenasend = send(client_socket, buf, strlen(buf),0);
+    if (bytenasend == -1)
+    {
+        perror("ERROR in sendto 270\n");
     }
 
-    //    printf("%.*s\n",byteread,buf);
+    // I have this block of code from example , author is Mr. Matouska
+    if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1){  // MSG_WAITALL pri čitani sa čaká na všetky data
+        err(1,"initial read() failed");
+    }
+
     input = buf;
     cout << "====== WHOIS ===========\n";
     PrintRegexMatch(input,inetnumReg);
