@@ -63,17 +63,17 @@ std::string getHostname(const char *domName)
     inet_pton(AF_INET, domain_name, &klient_adress.sin_addr);
 
     int result = getnameinfo((struct sockaddr*)&klient_adress,sizeof(klient_adress),domain_name,sizeof(domain_name),NULL,0,NI_NAMEREQD);
-    if(result)
+/*    if(result)
     {
         fprintf(stderr, "65 vo funkci getHostname %s: %s\n", domain_name, gai_strerror(result));
 
     //    exit(EXIT_FAILURE); TU JE ODSTREANENY EXIT LEBO TO POTOM NEFUNGUJE AK ZADAS domenu
-    }
-    else
-    {
+}*/
 
-        printf("DOMAIN NAME: %s\n", domain_name);    // e.g. "www.example.com"
-    }
+
+
+    printf("DOMAIN NAME: %s\n\n\n", domain_name);    // e.g. "www.example.com"
+
     std::string ip;
     ip += domain_name;
     return ip;
@@ -87,40 +87,41 @@ void runDnsQuery(const char *dname, int nType)
     ns_msg msg;
     ns_rr rr;
 
-    int x = 0, l;
+    int x, l;
     int msg_size;
 
 
-    std::regex a_dns("A.*");
-    std::regex aaaa_dns("AAAA.*");
-    std::regex soa_dns("SOA.*");
-    std::regex mx_dns("MX.*");
-    std::regex ns_dns("NS.*");
-    std::regex ptr_dns("A.*");
+    std::regex a_dns("\\sA.*");
+    std::regex aaaa_dns("\\sAAAA.*");
+    std::regex soa_dns("\\sSOA.*");
+    std::regex mx_dns("\\sMX.*");
+    std::regex ns_dns("\\sNS.*");
+    std::regex ptr_dns("\\sPTR.*");
     std::regex cname_dns("CNAME.*");
 // HEADER
 
     l = res_search(dname,ns_c_any,nType,nsbuf,sizeof(nsbuf));
     if(l < 0)
     {
-        perror("kurva 103");
+        perror("");
     }
     ns_initparse(nsbuf,l,&msg);
-    //l= ns_msg_count(msg,ns_s_an);
-    ns_parserr(&msg, ns_s_an, x, &rr);
-    ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
-    printf("%s \n", dispbuf);
-/*    PrintRegexMatch(dispbuf,a_dns);
-    PrintRegexMatch(dispbuf,mx_dns);
-    PrintRegexMatch(dispbuf,soa_dns);
-    PrintRegexMatch(dispbuf,ns_dns);
-    PrintRegexMatch(dispbuf,ptr_dns);
-    PrintRegexMatch(dispbuf,cname_dns);*/
+    l= ns_msg_count(msg,ns_s_an);
+    for(x = 0; x < l; x++)
+    {
+        ns_parserr(&msg, ns_s_an, x, &rr);
+        ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
+    //    printf("%s \n", dispbuf);
+        PrintRegexMatch(dispbuf,ns_dns);
+        PrintRegexMatch(dispbuf,a_dns);
+        PrintRegexMatch(dispbuf,mx_dns);
+        PrintRegexMatch(dispbuf,soa_dns);
+        PrintRegexMatch(dispbuf,ptr_dns);
+    }
+    //PrintRegexMatch(dispbuf,cname_dns);
 
 
 
-
-    // return 0;
 }
 
 int main(int argc, char **argv) {
@@ -146,13 +147,13 @@ int main(int argc, char **argv) {
     int result_for_whois, result_for_client;
 
     string input;
-    std::regex inetnumReg("inetnum:.*");
-    std::regex netnameReg("netname:.*");
-    std::regex descrReg("descr:.*");
-    std::regex countryReg("country:.*");
-    std::regex addressReg("address:.*");
-    std::regex phoneReg("phone:.*");
-    std::regex admin_cReg("admin-c:.*");
+    std::regex inetnumReg("inetnum:.*",std::regex_constants::icase);
+    std::regex netnameReg("netname:.*",std::regex_constants::icase);
+    std::regex descrReg("descr:.*",std::regex_constants::icase);
+    std::regex countryReg("country:.*",std::regex_constants::icase);
+    std::regex addressReg("address:.*",std::regex_constants::icase);
+    std::regex phoneReg("phone:.*",std::regex_constants::icase);
+    std::regex admin_cReg("admin-c:.*",std::regex_constants::icase);
 
 //    std::cmatch m;
 
@@ -201,32 +202,18 @@ int main(int argc, char **argv) {
        }
    }
 
-cout << "======== DNS:\t" << dns << "=============\n";
+cout << "======== DNS:\t=============\n";
 
 
     std::string result = getHostname(hostname);
 
+
     const char *ip = result.c_str();
-    cout << "TOTO JE SOA \n";
+
     runDnsQuery(ip,ns_t_soa);
-
-    cout << "\nTOTO JE AAAAA \n";
     runDnsQuery(ip,ns_t_aaaa);
-    cout << "\nTOTO JE A \n";
     runDnsQuery(ip,ns_t_a);
-    cout << "HLUPAAAK" << ip;
-
-
-
-
-    cout <<"KDE SOM" << ip;
-    cout << "\nTOTO JE PTR \n";
-    runDnsQuery(ip,ns_t_ptr);
-    cout << "\nTOTO JE CNAME \n";
-    runDnsQuery(ip,ns_t_cname);
-    cout << "\nTOTO JE NS \n";
     runDnsQuery(ip,ns_t_ns);
-    cout << "\nTOTO JE MX \n";
     runDnsQuery(ip,ns_t_mx);
 
 
@@ -263,7 +250,7 @@ cout << "======== DNS:\t" << dns << "=============\n";
              exit(EXIT_FAILURE);
          }
      }
-     cout <<"WHOIS IP ADDRESS:\t " << whois << "\n";
+     cout <<"\n\n\nWHOIS IP ADDRESS:\t " << whois << "\n";
 
      memset(&client_adress,0,sizeof(client_adress));
      client_adress.ai_family = AF_INET;
@@ -305,7 +292,9 @@ cout << "======== DNS:\t" << dns << "=============\n";
     }
 
     input = buf;
+
     cout << "====== WHOIS ===========\n";
+    //cout << input;
     PrintRegexMatch(input,inetnumReg);
     PrintRegexMatch(input,netnameReg);
     PrintRegexMatch(input,descrReg);
