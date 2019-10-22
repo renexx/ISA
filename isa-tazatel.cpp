@@ -41,13 +41,13 @@ void print_usage()
 void PrintRegexMatch(std::string str, std::regex reg)
 {
     std::smatch match;
-    //std::cout << std::boolalpha;
+    //std::cout << std::boolalpha;
     while(std::regex_search(str,match,reg))
     {
         std::cout << match.str() << "\n";
         str = match.suffix().str();
+      //  cout<<"TOTO JE MATCH"<< match[2];
     }
-
 }
 std::string getHostname(const char *domName)
 {
@@ -66,20 +66,19 @@ std::string getHostname(const char *domName)
 /*    if(result)
     {
         fprintf(stderr, "65 vo funkci getHostname %s: %s\n", domain_name, gai_strerror(result));
-
     //    exit(EXIT_FAILURE); TU JE ODSTREANENY EXIT LEBO TO POTOM NEFUNGUJE AK ZADAS domenu
 }*/
 
 
 
-    printf("DOMAIN NAME: %s\n\n\n", domain_name);    // e.g. "www.example.com"
+    //printf("DOMAIN NAME: %s\n\n\n", domain_name);    // e.g. "www.example.com"
 
     std::string ip;
     ip += domain_name;
     return ip;
 
 }
-void runDnsQuery(const char *dname, int nType)
+std::string runDnsQuery(const char *dname, int nType)
 {
 
     u_char nsbuf[N];
@@ -91,15 +90,15 @@ void runDnsQuery(const char *dname, int nType)
     int msg_size;
 
 
-    std::regex a_dns("\\sA.*");
-    std::regex aaaa_dns("\\sAAAA.*");
-    std::regex soa_dns("\\sSOA.*");
-    std::regex mx_dns("\\sMX.*");
-    std::regex ns_dns("\\sNS.*");
+    std::regex a_dns("(A)(.+[[:digit:]])\\.(.+)");
+    std::regex aaaa_dns("(AAAA)(.+)");
+
+    std::regex mx_dns("(MX)(.*)");
+    std::regex ns_dns("(NS)(.*)");
     std::regex ptr_dns("\\sPTR.*");
     std::regex cname_dns("CNAME.*");
 // HEADER
-
+    std::cmatch m;
     l = res_search(dname,ns_c_any,nType,nsbuf,sizeof(nsbuf));
     if(l < 0)
     {
@@ -112,15 +111,21 @@ void runDnsQuery(const char *dname, int nType)
         ns_parserr(&msg, ns_s_an, x, &rr);
         ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
     //    printf("%s \n", dispbuf);
+
+
         PrintRegexMatch(dispbuf,ns_dns);
+        PrintRegexMatch(dispbuf,aaaa_dns);
+
         PrintRegexMatch(dispbuf,a_dns);
         PrintRegexMatch(dispbuf,mx_dns);
-        PrintRegexMatch(dispbuf,soa_dns);
         PrintRegexMatch(dispbuf,ptr_dns);
+
+
     }
-    //PrintRegexMatch(dispbuf,cname_dns);
 
-
+    std::string vypis;
+    vypis += dispbuf;
+    return vypis;
 
 }
 
@@ -131,7 +136,7 @@ int main(int argc, char **argv) {
     const char *addr;
 
     struct servent *servent;
-
+    struct hostent *dns_addr;
     struct sockaddr_in6 ipv6;
     extern char *optarg;
     bool q_flag = false;
@@ -144,12 +149,13 @@ int main(int argc, char **argv) {
     int i = 0;
     int msg_size;
     struct addrinfo whois_server, *whois_infoptr, *whois_ptr, client_adress, *client_infoptr, *client_ptr;
-    int result_for_whois, result_for_client;
+    struct addrinfo dns_adress, *dns_infoptr, *dns_ptr;
+    int result_for_whois, result_for_client,result_for_dns;
 
     string input;
-    std::regex inetnumReg("inetnum:.*",std::regex_constants::icase);
+    std::regex inetnumReg("(inetnum:.*|netrange:.*|nethandle:.*)",std::regex_constants::icase);
     std::regex netnameReg("netname:.*",std::regex_constants::icase);
-    std::regex descrReg("descr:.*",std::regex_constants::icase);
+    std::regex descrReg("(descr:.*|organization:.*)",std::regex_constants::icase);
     std::regex countryReg("country:.*",std::regex_constants::icase);
     std::regex addressReg("address:.*",std::regex_constants::icase);
     std::regex phoneReg("phone:.*",std::regex_constants::icase);
@@ -187,7 +193,7 @@ int main(int argc, char **argv) {
                    }
                    break;
            case 'd':
-
+                    d_flag = true;
                     strcpy(dns,optarg);
                     break;
            case '?':
@@ -202,19 +208,72 @@ int main(int argc, char **argv) {
        }
    }
 
-cout << "======== DNS:\t=============\n";
+cout << "======== DNS =========== "<<"\n";
 
+
+      if(d_flag == true)
+      {
+        char buf[16];
+        memset(&dns_adress,0,sizeof(dns_adress));
+        if (inet_pton(AF_INET, dns, /*&_res.nsaddr_list[0].sin_addr*/buf))
+        {
+          res_init();
+          result_for_dns = getaddrinfo(dns,NULL,&dns_adress,&dns_infoptr);
+          if(result_for_dns != 0)
+          {
+              fprintf(stderr, "%s: %s\n", dns, gai_strerror(result_for_dns));
+              exit(EXIT_FAILURE);
+          }
+          for(dns_ptr = dns_infoptr; dns_ptr != NULL; dns_ptr = dns_ptr->ai_next)
+          {
+              getnameinfo(dns_ptr->ai_addr,dns_ptr->ai_addrlen,dns,sizeof(dns),NULL,0,NI_NUMERICHOST);
+
+          }
+
+          (void) memcpy((void *)&_res.nsaddr_list[0].sin_addr, dns_ptr->ai_addr, dns_ptr->ai_addrlen);
+          cout <<dns_addr->h_addr_list[0];
+          _res.nscount = 1;
+
+
+        }
+        else
+        {
+          fprintf(stderr, "NO IP addres as %s\n",dns);
+          exit(EXIT_FAILURE);
+        }
+
+
+
+      }
 
     std::string result = getHostname(hostname);
 
 
     const char *ip = result.c_str();
 
-    runDnsQuery(ip,ns_t_soa);
     runDnsQuery(ip,ns_t_aaaa);
     runDnsQuery(ip,ns_t_a);
     runDnsQuery(ip,ns_t_ns);
     runDnsQuery(ip,ns_t_mx);
+    std::string vypis = runDnsQuery(ip,ns_t_soa);
+
+    std::smatch m;
+    std::regex soa_email("(SOA)(.+)\\.(.+)\\.(.+)\\.(.+)\\.(.+)");
+    std::regex_search(vypis,m,soa_email);
+
+    std::string match1 = m[1];
+    std::string match2 = m[2];
+    std::string match3 = m[3];
+    std::string match4 = m[4];
+    std::string match5 = m[5];
+
+    std::stringstream admin_mail,soa;
+    soa << match1 << ":   " << match2;
+    std::string soa_result = soa.str();
+    cout << soa_result << "\n";
+    admin_mail<<"admin email:"  << match3 << "@" << match4 << "." << match5 << "\n";
+    std::string admin_mail_result = admin_mail.str();
+    cout << admin_mail_result << "\n";
 
 
 
@@ -250,7 +309,7 @@ cout << "======== DNS:\t=============\n";
              exit(EXIT_FAILURE);
          }
      }
-     cout <<"\n\n\nWHOIS IP ADDRESS:\t " << whois << "\n";
+    // cout <<"\n\n\nWHOIS IP ADDRESS:\t " << whois << "\n";
 
      memset(&client_adress,0,sizeof(client_adress));
      client_adress.ai_family = AF_INET;
@@ -271,14 +330,14 @@ cout << "======== DNS:\t=============\n";
     /* inet_pton(AF_INET, hostname, &klient_adress);
      he = gethostbyaddr(&klient_adress, sizeof(klient_adress),AF_INET);
      printf("Host name: %s\n", he->h_name);*/
-     getHostname(hostname);
-     getHostname(whois);
+     //getHostname(hostname);
+     //getHostname(whois);
     /* odeslani zpravy na server */
 
 
     strcpy(buf,hostname);
     strcat(buf,"\r\n");//<CR><LF>
-    cout << buf;
+  //  cout << buf;
 
     bytenasend = send(client_socket, buf, strlen(buf),0);
     if (bytenasend == -1)
@@ -308,5 +367,6 @@ cout << "======== DNS:\t=============\n";
    //free(daco);
    freeaddrinfo(whois_infoptr);
    freeaddrinfo(client_infoptr);
+   freeaddrinfo(dns_infoptr);
    return 0;
 }
