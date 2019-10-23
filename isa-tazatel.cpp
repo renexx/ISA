@@ -136,8 +136,8 @@ int main(int argc, char **argv) {
     const char *addr;
 
     struct servent *servent;
-    struct hostent *dns_addr;
-    struct sockaddr_in6 ipv6;
+    struct hostent *hostent_dns;
+    struct sockaddr_in dns_ad;
     extern char *optarg;
     bool q_flag = false;
     bool w_flag = false;
@@ -218,7 +218,7 @@ cout << "======== DNS =========== "<<"\n";
         if (inet_pton(AF_INET, dns, /*&_res.nsaddr_list[0].sin_addr*/buf))
         {
           res_init();
-          result_for_dns = getaddrinfo(dns,NULL,&dns_adress,&dns_infoptr);
+        /*  result_for_dns = getaddrinfo(dns,NULL,&dns_adress,&dns_infoptr);
           if(result_for_dns != 0)
           {
               fprintf(stderr, "%s: %s\n", dns, gai_strerror(result_for_dns));
@@ -230,10 +230,20 @@ cout << "======== DNS =========== "<<"\n";
 
           }
 
-          (void) memcpy((void *)&_res.nsaddr_list[0].sin_addr, dns_ptr->ai_addr, dns_ptr->ai_addrlen);
+          strcpy(&_res.nsaddr_list[0].sin_addr,dns_ptr->ai_addr);
           cout <<dns_addr->h_addr_list[0];
+          _res.nscount = 1;*/
+          if ((hostent_dns = gethostbyname(dns)) == NULL) {
+              fprintf(stderr,"ERROR: no such host as %s\n", dns);
+              exit(EXIT_FAILURE);
+            }
+        //  int dns_port_number = 53;
+        //  bzero((char *) &dns_ad, sizeof(dns_ad));
+      //  dns_ad.sin_family = AF_INET;
+        //  dns_ad.sin_port = htons(dns_port_number);
+        //  bcopy((char *)hostent_dns->h_addr, (char *)&dns_ad.sin_addr.s_addr, hostent_dns->h_length);
+          (void)memcpy((void*)&_res.nsaddr_list[0].sin_addr,(void*)hostent_dns->h_addr_list[0],(size_t)hostent_dns->h_length);
           _res.nscount = 1;
-
 
         }
         else
