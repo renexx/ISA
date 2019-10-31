@@ -38,16 +38,19 @@ void print_usage()
     exit(2);
 }
 
-void PrintRegexMatch(std::string str, std::regex reg)
+int PrintRegexMatch(std::string str, std::regex reg)
 {
     std::smatch match;
+    int counter = 0;
     //std::cout << std::boolalpha;
     while(std::regex_search(str,match,reg))
     {
         std::cout << match.str() << "\n";
         str = match.suffix().str();
       //  cout<<"TOTO JE MATCH"<< match[2];
+      counter++;
     }
+    return counter;
 }
 std::string getHostname(const char *domName)
 {
@@ -90,7 +93,7 @@ std::string runDnsQuery(const char *dname, int nType)
     int msg_size;
 
 
-    std::regex a_dns("(A)(.+[[:digit:]])\\.(.+)");
+    std::regex a_dns("(\\sA)(.+[[:digit:]])\\.(.+)");
     std::regex aaaa_dns("(AAAA)(.+)");
 
     std::regex mx_dns("(MX)(.*)");
@@ -110,15 +113,16 @@ std::string runDnsQuery(const char *dname, int nType)
     {
         ns_parserr(&msg, ns_s_an, x, &rr);
         ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
-    //    printf("%s \n", dispbuf);
+        //printf("%s \n", dispbuf);
 
 
         PrintRegexMatch(dispbuf,ns_dns);
         PrintRegexMatch(dispbuf,aaaa_dns);
-
+        PrintRegexMatch(dispbuf,cname_dns);
         PrintRegexMatch(dispbuf,a_dns);
         PrintRegexMatch(dispbuf,mx_dns);
-        PrintRegexMatch(dispbuf,ptr_dns);
+
+    //    PrintRegexMatch(dispbuf,ptr_dns);
 
 
     }
@@ -210,14 +214,14 @@ int main(int argc, char **argv) {
 
 cout << "======== DNS =========== "<<"\n";
 
-
+/*
       if(d_flag == true)
       {
         char buf[16];
         memset(&dns_adress,0,sizeof(dns_adress));
-        if (inet_pton(AF_INET, dns, /*&_res.nsaddr_list[0].sin_addr*/buf))
-        {
-          res_init();
+      //  if (inet_pton(AF_INET, dns, /*&_res.nsaddr_list[0].sin_addr*///buf))
+      //  {
+        //  res_init();
         /*  result_for_dns = getaddrinfo(dns,NULL,&dns_adress,&dns_infoptr);
           if(result_for_dns != 0)
           {
@@ -233,7 +237,7 @@ cout << "======== DNS =========== "<<"\n";
           strcpy(&_res.nsaddr_list[0].sin_addr,dns_ptr->ai_addr);
           cout <<dns_addr->h_addr_list[0];
           _res.nscount = 1;*/
-          if ((hostent_dns = gethostbyname(dns)) == NULL) {
+      /*    if ((hostent_dns = gethostbyname(dns)) == NULL) {
               fprintf(stderr,"ERROR: no such host as %s\n", dns);
               exit(EXIT_FAILURE);
             }
@@ -254,36 +258,53 @@ cout << "======== DNS =========== "<<"\n";
 
 
 
-      }
+      }*/
 
     std::string result = getHostname(hostname);
 
+    std::string orezane = result;
+    std::size_t pos = orezane.find(".");
+    std:string str3 = orezane.substr(pos + 1);
 
-    const char *ip = result.c_str();
 
-    runDnsQuery(ip,ns_t_aaaa);
-    runDnsQuery(ip,ns_t_a);
-    runDnsQuery(ip,ns_t_ns);
-    runDnsQuery(ip,ns_t_mx);
-    std::string vypis = runDnsQuery(ip,ns_t_soa);
+    cout <<"JA som bez " << str3 << "\n";
+    cout << "JA som orezane " << orezane << "\n";
+    cout << "JA SOM REUSLT " << result << "\n";
+
+
+    const char *domenove_meno = result.c_str(); //www.mobilmania.cz
+    const char *domain = str3.c_str(); //mobilmania.cz
+    cout << " JA SOM bez bez " << domain << "\n";
+    cout << " JA SOM ip do dnsquery " << domenove_meno << "\n";
+    runDnsQuery(domenove_meno,ns_t_aaaa);
+    runDnsQuery(domenove_meno,ns_t_a);
+    runDnsQuery(domenove_meno,ns_t_ns);
+    runDnsQuery(domenove_meno,ns_t_mx);
+    std::string vypis = runDnsQuery(domenove_meno,ns_t_soa);
 
     std::smatch m;
     std::regex soa_email("(SOA)(.+)\\.(.+)\\.(.+)\\.(.+)\\.(.+)");
-    std::regex_search(vypis,m,soa_email);
+    if(std::regex_search(vypis,m,soa_email) == true) // ak najde SOA tak to cele sparsuje
+    {
 
-    std::string match1 = m[1];
-    std::string match2 = m[2];
-    std::string match3 = m[3];
-    std::string match4 = m[4];
-    std::string match5 = m[5];
+      std::string match1 = m[1];
+      std::string match2 = m[2];
+      std::string match3 = m[3];
+      std::string match4 = m[4];
+      std::string match5 = m[5];
 
-    std::stringstream admin_mail,soa;
-    soa << match1 << ":   " << match2;
-    std::string soa_result = soa.str();
-    cout << soa_result << "\n";
-    admin_mail<<"admin email:"  << match3 << "@" << match4 << "." << match5 << "\n";
-    std::string admin_mail_result = admin_mail.str();
-    cout << admin_mail_result << "\n";
+      std::stringstream admin_mail,soa;
+      soa << match1 << ":   " << match2<<".";
+      std::string soa_result = soa.str();
+      cout << soa_result << "\n";
+      admin_mail<<"admin email:"  << match3 << "@" << match4 << "." << match5 << "." << "\n";
+      std::string admin_mail_result = admin_mail.str();
+      cout << admin_mail_result << "\n";
+    }
+    else
+    {
+      printf("SOA RECORDS IS NOT FOUND pls try entry a domain no domain name\n"); // ak nenajde tak vyhodi hlasku
+    }
 
 
 
@@ -368,8 +389,11 @@ cout << "======== DNS =========== "<<"\n";
     PrintRegexMatch(input,netnameReg);
     PrintRegexMatch(input,descrReg);
     PrintRegexMatch(input,countryReg);
-    PrintRegexMatch(input,admin_cReg);
+    int counter = PrintRegexMatch(input,admin_cReg);
     PrintRegexMatch(input,addressReg);
+    if(counter == 0){
+      cout<< "NEBOL NAJDENY admin-c"<< "\n";
+    }
     PrintRegexMatch(input,phoneReg);
 
    close(client_socket);
