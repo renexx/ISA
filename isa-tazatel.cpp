@@ -113,7 +113,7 @@ std::string runDnsQuery(const char *dname, int nType)
     {
         ns_parserr(&msg, ns_s_an, x, &rr);
         ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
-        //printf("%s \n", dispbuf);
+    // /    printf("%s \n", dispbuf);
 
 
         PrintRegexMatch(dispbuf,ns_dns);
@@ -266,16 +266,9 @@ cout << "======== DNS =========== "<<"\n";
     std::size_t pos = orezane.find(".");
     std:string str3 = orezane.substr(pos + 1);
 
-
-    cout <<"JA som bez " << str3 << "\n";
-    cout << "JA som orezane " << orezane << "\n";
-    cout << "JA SOM REUSLT " << result << "\n";
-
-
     const char *domenove_meno = result.c_str(); //www.mobilmania.cz
     const char *domain = str3.c_str(); //mobilmania.cz
-    cout << " JA SOM bez bez " << domain << "\n";
-    cout << " JA SOM ip do dnsquery " << domenove_meno << "\n";
+
     runDnsQuery(domenove_meno,ns_t_aaaa);
     runDnsQuery(domenove_meno,ns_t_a);
     runDnsQuery(domenove_meno,ns_t_ns);
