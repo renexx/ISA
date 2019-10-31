@@ -97,7 +97,7 @@ std::string runDnsQuery(const char *dname, int nType)
     std::regex aaaa_dns("(AAAA)(.+)");
 
     std::regex mx_dns("(MX)(.*)");
-    std::regex ns_dns("NS.*");
+    std::regex ns_dns("NS.+\\S");
     std::regex ptr_dns("\\sPTR.*");
     std::regex cname_dns("CNAME.*");
 // HEADER
@@ -114,9 +114,9 @@ std::string runDnsQuery(const char *dname, int nType)
         ns_parserr(&msg, ns_s_an, x, &rr);
         ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
     // /
+      //  cout <<"AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
 
-
-        //printf("%s \n", dispbuf);
+    //    printf("%s \n", dispbuf);
 
 
         PrintRegexMatch(dispbuf,ns_dns);
@@ -274,7 +274,7 @@ cout << "======== DNS =========== "<<"\n";
     runDnsQuery(domenove_meno,ns_t_ns);
     runDnsQuery(domenove_meno,ns_t_mx);
     std::string vypis = runDnsQuery(domenove_meno,ns_t_soa);
-
+    //cout << domenove_meno << "\n";
     std::smatch m;
     std::regex soa_email("(SOA)(.+)\\.(.+)\\.(.+)\\.(.+)\\.(.+)");
     if(std::regex_search(vypis,m,soa_email) == true) // ak najde SOA tak to cele sparsuje
