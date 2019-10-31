@@ -97,7 +97,7 @@ std::string runDnsQuery(const char *dname, int nType)
     std::regex aaaa_dns("(AAAA)(.+)");
 
     std::regex mx_dns("(MX)(.*)");
-    std::regex ns_dns("(NS)(.*)");
+    std::regex ns_dns("NS.*");
     std::regex ptr_dns("\\sPTR.*");
     std::regex cname_dns("CNAME.*");
 // HEADER
@@ -113,16 +113,22 @@ std::string runDnsQuery(const char *dname, int nType)
     {
         ns_parserr(&msg, ns_s_an, x, &rr);
         ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
-    // /    printf("%s \n", dispbuf);
+    // /
+
+
+        //printf("%s \n", dispbuf);
 
 
         PrintRegexMatch(dispbuf,ns_dns);
         PrintRegexMatch(dispbuf,aaaa_dns);
         PrintRegexMatch(dispbuf,cname_dns);
-        PrintRegexMatch(dispbuf,a_dns);
+      //int daco = PrintRegexMatch(dispbuf,a_dns);
+        //if(daco == 0){
+          //cout << "nebolo najdene a\n";
+        //}
         PrintRegexMatch(dispbuf,mx_dns);
 
-    //    PrintRegexMatch(dispbuf,ptr_dns);
+        PrintRegexMatch(dispbuf,ptr_dns);
 
 
     }
@@ -231,9 +237,7 @@ cout << "======== DNS =========== "<<"\n";
           for(dns_ptr = dns_infoptr; dns_ptr != NULL; dns_ptr = dns_ptr->ai_next)
           {
               getnameinfo(dns_ptr->ai_addr,dns_ptr->ai_addrlen,dns,sizeof(dns),NULL,0,NI_NUMERICHOST);
-
           }
-
           strcpy(&_res.nsaddr_list[0].sin_addr,dns_ptr->ai_addr);
           cout <<dns_addr->h_addr_list[0];
           _res.nscount = 1;*/
@@ -248,16 +252,12 @@ cout << "======== DNS =========== "<<"\n";
         //  bcopy((char *)hostent_dns->h_addr, (char *)&dns_ad.sin_addr.s_addr, hostent_dns->h_length);
           (void)memcpy((void*)&_res.nsaddr_list[0].sin_addr,(void*)hostent_dns->h_addr_list[0],(size_t)hostent_dns->h_length);
           _res.nscount = 1;
-
         }
         else
         {
           fprintf(stderr, "NO IP addres as %s\n",dns);
           exit(EXIT_FAILURE);
         }
-
-
-
       }*/
 
     std::string result = getHostname(hostname);
@@ -358,7 +358,7 @@ cout << "======== DNS =========== "<<"\n";
      //getHostname(whois);
     /* odeslani zpravy na server */
 
-
+    cout << "A: " << hostname << "\n";
     strcpy(buf,hostname);
     strcat(buf,"\r\n");//<CR><LF>
   //  cout << buf;
