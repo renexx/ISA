@@ -295,7 +295,7 @@ cout << "======== DNS =========== "<<"\n";
     std::string vypis = runDnsQuery(domenove_meno,ns_t_soa);
     //cout << domenove_meno << "\n";
     std::smatch m;
-    std::regex soa_email("(SOA)(.+)\\.(.+)\\.(.+)\\.(.+)\\.(.+)");
+    std::regex soa_email("(SOA)(.+)\\.\\s(.+)(.+)(.+)(.+)");
     if(std::regex_search(vypis,m,soa_email) == true) // ak najde SOA tak to cele sparsuje
     {
 
@@ -309,7 +309,7 @@ cout << "======== DNS =========== "<<"\n";
       soa << match1 << "   " << match2<<".";
       std::string soa_result = soa.str();
       cout << soa_result << "\n";
-      admin_mail<<"admin email"  << match3 << "@" << match4 << "." << match5 << "." << "\n";
+      admin_mail<<"admin email "  << match3 << "@" << match4 << "." << match5 << "." << "\n"; // replacnut prvu bodku v match3
       std::string admin_mail_result = admin_mail.str();
       cout << admin_mail_result << "\n";
     }
