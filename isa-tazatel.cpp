@@ -170,8 +170,15 @@ int main(int argc, char **argv) {
     std::regex descrReg("(descr:.*|organization:.*)",std::regex_constants::icase);
     std::regex countryReg("country:.*",std::regex_constants::icase);
     std::regex addressReg("address:.*",std::regex_constants::icase);
-    std::regex phoneReg("phone:.*",std::regex_constants::icase);
+    std::regex phoneReg("phone:.*");
     std::regex admin_cReg("admin-c:.*",std::regex_constants::icase);
+
+    /* REGEX FOR WHOIS.ARIN.NET */
+    std::regex cidrReg("CIDR:.*",std::regex_constants::icase);
+    std::regex rtechPhoneReg("RTechPhone:.*",std::regex_constants::icase);
+    std::regex orgtechPhoneReg("OrgTechPhone:.*",std::regex_constants::icase);
+    std::regex orgAbusePhoneReg("OrgAbusePhone:.*",std::regex_constants::icase);
+
 
     /*------------- REGEX FOR WHOIS.NIC.CZ--------------*/
   /*  std::regex domianReg("domain:.*",std::regex_constants::icase);
@@ -280,7 +287,7 @@ cout << "======== DNS =========== "<<"\n";
 
     const char *domenove_meno = result.c_str(); //www.mobilmania.cz
     const char *domain = str3.c_str(); //mobilmania.cz
-    
+
     runDnsQuery(domenove_meno,ns_t_aaaa);
     runDnsQuery(domenove_meno,ns_t_a);
     runDnsQuery(domenove_meno,ns_t_ns);
@@ -467,18 +474,19 @@ cout << "======== DNS =========== "<<"\n";
       input = buf;
 
       cout << "====== WHOIS: "<<whois_domena <<"===========\n";
-      //  cout << input;
+      //cout << input;
       PrintRegexMatch(input,inetnumReg);
       PrintRegexMatch(input,netnameReg);
+      /*CIDR in whois.arin.net because i liked it*/
+      PrintRegexMatch(input,cidrReg);
       PrintRegexMatch(input,descrReg);
       PrintRegexMatch(input,countryReg);
-      int counter = PrintRegexMatch(input,admin_cReg);
+      PrintRegexMatch(input,admin_cReg);
       PrintRegexMatch(input,addressReg);
-      if(counter == 0){
-        cout<< "NEBOL NAJDENY admin-c"<< "\n";
-      }
       PrintRegexMatch(input,phoneReg);
-
+      PrintRegexMatch(input,rtechPhoneReg);
+      PrintRegexMatch(input,orgtechPhoneReg);
+      PrintRegexMatch(input,orgAbusePhoneReg);
 
     }
     close(client_socket);
