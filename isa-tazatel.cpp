@@ -78,6 +78,8 @@ std::string getHostname(const char *domName)
 
     std::string ip;
     ip += domain_name;
+
+
     return ip;
 
 }
@@ -96,17 +98,17 @@ std::string runDnsQuery(const char *dname, int nType)
     std::regex a_dns("(\\sA)(.+[[:digit:]])\\.(.+)");
     std::regex aaaa_dns("(AAAA)(.+)");
 
-    std::regex mx_dns("(MX)(.*)");
+    std::regex mx_dns("MX.+[a-zA-Z]");
     std::regex ns_dns("NS.+\\S");
     std::regex ptr_dns("\\sPTR.*");
     std::regex cname_dns("CNAME.*");
 // HEADER
     std::cmatch m;
     l = res_search(dname,ns_c_any,nType,nsbuf,sizeof(nsbuf));
-    if(l < 0)
-    {
-        perror("");
-    }
+    //if(l < 0)
+    //{
+      //  perror("d");
+    //}
     ns_initparse(nsbuf,l,&msg);
     l= ns_msg_count(msg,ns_s_an);
     for(x = 0; x < l; x++)
@@ -116,13 +118,13 @@ std::string runDnsQuery(const char *dname, int nType)
     // /
       //  cout <<"AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
 
-    //    printf("%s \n", dispbuf);
+        //printf("%s \n", dispbuf);
 
 
         PrintRegexMatch(dispbuf,ns_dns);
         PrintRegexMatch(dispbuf,aaaa_dns);
         PrintRegexMatch(dispbuf,cname_dns);
-      //int daco = PrintRegexMatch(dispbuf,a_dns);
+      //  PrintRegexMatch(dispbuf,a_dns);
         //if(daco == 0){
           //cout << "nebolo najdene a\n";
         //}
@@ -171,6 +173,15 @@ int main(int argc, char **argv) {
     std::regex phoneReg("phone:.*",std::regex_constants::icase);
     std::regex admin_cReg("admin-c:.*",std::regex_constants::icase);
 
+    /*------------- REGEX FOR WHOIS.NIC.CZ--------------*/
+  /*  std::regex domianReg("domain:.*",std::regex_constants::icase);
+    std::regex registrantReg("registrant:.*",std::regex_constants::icase);
+    std::regex registrarReg("registrar:.*",std::regex_constants::icase);
+    std::regex orgReg("org:.*",std::regex_constants::icase);
+    std::regex nameReg("name:.*",std::regex_constants::icase);
+    std::regex contactReg("contact:.*",std::regex_constants::icase);
+    std::regex nserverReg("nserver:.*",std::regex_constants::icase);*/
+
 //    std::cmatch m;
 
     if(argc < 5 || argc > 7)
@@ -195,6 +206,7 @@ int main(int argc, char **argv) {
                    if(w_flag == false)
                    {
                        strcpy(whois,optarg);
+
                    }
                    else
                    {
@@ -268,7 +280,7 @@ cout << "======== DNS =========== "<<"\n";
 
     const char *domenove_meno = result.c_str(); //www.mobilmania.cz
     const char *domain = str3.c_str(); //mobilmania.cz
-
+    
     runDnsQuery(domenove_meno,ns_t_aaaa);
     runDnsQuery(domenove_meno,ns_t_a);
     runDnsQuery(domenove_meno,ns_t_ns);
@@ -287,10 +299,10 @@ cout << "======== DNS =========== "<<"\n";
       std::string match5 = m[5];
 
       std::stringstream admin_mail,soa;
-      soa << match1 << ":   " << match2<<".";
+      soa << match1 << "   " << match2<<".";
       std::string soa_result = soa.str();
       cout << soa_result << "\n";
-      admin_mail<<"admin email:"  << match3 << "@" << match4 << "." << match5 << "." << "\n";
+      admin_mail<<"admin email"  << match3 << "@" << match4 << "." << match5 << "." << "\n";
       std::string admin_mail_result = admin_mail.str();
       cout << admin_mail_result << "\n";
     }
@@ -354,46 +366,129 @@ cout << "======== DNS =========== "<<"\n";
     /* inet_pton(AF_INET, hostname, &klient_adress);
      he = gethostbyaddr(&klient_adress, sizeof(klient_adress),AF_INET);
      printf("Host name: %s\n", he->h_name);*/
-     //getHostname(hostname);
-     //getHostname(whois);
-    /* odeslani zpravy na server */
+
 
     cout << "A: " << hostname << "\n";
-    strcpy(buf,hostname);
-    strcat(buf,"\r\n");//<CR><LF>
-  //  cout << buf;
+    std::string whois_domena = getHostname(whois);
+    const char* dpc = whois_domena.c_str();
 
-    bytenasend = send(client_socket, buf, strlen(buf),0);
-    if (bytenasend == -1)
+    if(strcmp(dpc,"whois.nic.cz") == 0)
     {
+      std::string inputforniccz = getHostname(hostname);
+
+      const char *jebnenma = inputforniccz.c_str();
+      if(std::regex_search(inputforniccz,m,std::regex("(www.)")) == true) // ak najde SOA tak to cele sparsuje
+      {
+        std::string orezane = result;
+        std::size_t pos = inputforniccz.find(".");
+        std::string nicczbezwww = inputforniccz.substr(pos + 1);
+        const char *input_for_nic = nicczbezwww.c_str(); //mobilmania.cz
+        strcpy(buf,input_for_nic);
+        strcat(buf,"\r\n");
+        bytenasend = send(client_socket, buf, strlen(buf),0);
+        if (bytenasend == -1)
+        {
+            perror("ERROR in sendto 270\n");
+        }
+
+        // I have this block of code from example , author is Mr. Matouska
+        if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1){  // MSG_WAITALL pri čitani sa čaká na všetky data
+            err(1,"initial read() failed");
+        }
+        input = buf;
+
+        cout << "====== WHOIS:"<< whois_domena <<"  ===========\n";
+        //cout << input;
+        std::size_t position = input.find("domain:");
+        std::string finalinput = input.substr(position);
+        cout<<finalinput<<"\n";
+      /*  PrintRegexMatch(input,addressReg);
+        PrintRegexMatch(input,admin_cReg);
+        PrintRegexMatch(input,domianReg);
+        PrintRegexMatch(input,registrantReg);
+        PrintRegexMatch(input,registrarReg);
+        PrintRegexMatch(input,orgReg);
+        PrintRegexMatch(input,nameReg);
+        PrintRegexMatch(input,contactReg);
+        PrintRegexMatch(input,nserverReg);*/
+      }
+      else
+      {
+
+        strcpy(buf,jebnenma);
+        strcat(buf,"\r\n");
+
+        bytenasend = send(client_socket, buf, strlen(buf),0);
+        if (bytenasend == -1)
+        {
+            perror("ERROR in sendto 270\n");
+        }
+
+        // I have this block of code from example , author is Mr. Matouska
+        if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1){  // MSG_WAITALL pri čitani sa čaká na všetky data
+            err(1,"initial read() failed");
+        }
+        input = buf;
+
+        cout << "====== WHOIS: "<< whois_domena <<"  ===========\n";
+      //  cout << input;
+        std::size_t position = input.find("domain:");
+        std::string finalinput = input.substr(position);
+        cout<<finalinput<<"\n";
+      /*  PrintRegexMatch(input,addressReg);
+        PrintRegexMatch(input,admin_cReg);
+        PrintRegexMatch(input,domianReg);
+        PrintRegexMatch(input,registrantReg);
+        PrintRegexMatch(input,registrarReg);
+        PrintRegexMatch(input,orgReg);
+        PrintRegexMatch(input,nameReg);
+        PrintRegexMatch(input,contactReg);
+        PrintRegexMatch(input,nserverReg);*/
+
+      }
+    }
+    else
+    {
+      strcpy(buf,hostname);
+      strcat(buf,"\r\n");//<CR><LF>
+      //  cout << buf;
+
+      bytenasend = send(client_socket, buf, strlen(buf),0);
+      if (bytenasend == -1)
+      {
         perror("ERROR in sendto 270\n");
-    }
+      }
 
-    // I have this block of code from example , author is Mr. Matouska
-    if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1){  // MSG_WAITALL pri čitani sa čaká na všetky data
+      // I have this block of code from example , author is Mr. Matouska
+      if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1){  // MSG_WAITALL pri čitani sa čaká na všetky data
         err(1,"initial read() failed");
+      }
+
+      input = buf;
+
+      cout << "====== WHOIS: "<<whois_domena <<"===========\n";
+      //  cout << input;
+      PrintRegexMatch(input,inetnumReg);
+      PrintRegexMatch(input,netnameReg);
+      PrintRegexMatch(input,descrReg);
+      PrintRegexMatch(input,countryReg);
+      int counter = PrintRegexMatch(input,admin_cReg);
+      PrintRegexMatch(input,addressReg);
+      if(counter == 0){
+        cout<< "NEBOL NAJDENY admin-c"<< "\n";
+      }
+      PrintRegexMatch(input,phoneReg);
+
+
     }
+    close(client_socket);
+    printf("\n\n* Closing client socket ...\n");
+    //free(daco);
+    freeaddrinfo(whois_infoptr);
+    freeaddrinfo(client_infoptr);
+    freeaddrinfo(dns_infoptr);
+    return 0;
 
-    input = buf;
 
-    cout << "====== WHOIS ===========\n";
-    //cout << input;
-    PrintRegexMatch(input,inetnumReg);
-    PrintRegexMatch(input,netnameReg);
-    PrintRegexMatch(input,descrReg);
-    PrintRegexMatch(input,countryReg);
-    int counter = PrintRegexMatch(input,admin_cReg);
-    PrintRegexMatch(input,addressReg);
-    if(counter == 0){
-      cout<< "NEBOL NAJDENY admin-c"<< "\n";
-    }
-    PrintRegexMatch(input,phoneReg);
 
-   close(client_socket);
-   printf("\n\n* Closing client socket ...\n");
-   //free(daco);
-   freeaddrinfo(whois_infoptr);
-   freeaddrinfo(client_infoptr);
-   freeaddrinfo(dns_infoptr);
-   return 0;
 }
