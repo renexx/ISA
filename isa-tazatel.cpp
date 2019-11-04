@@ -111,7 +111,6 @@ std::string  hostnameToIp(const char *domName)
 }
 
 
-
 std::string runDnsQuery(const char *dname, int nType)
 {
 
@@ -153,7 +152,7 @@ std::string runDnsQuery(const char *dname, int nType)
         PrintRegexMatch(dispbuf,ns_dns);
         PrintRegexMatch(dispbuf,aaaa_dns);
         PrintRegexMatch(dispbuf,cname_dns);
-      //  PrintRegexMatch(dispbuf,a_dns);
+        PrintRegexMatch(dispbuf,a_dns);
         //if(daco == 0){
           //cout << "nebolo najdene a\n";
         //}
@@ -302,14 +301,14 @@ int main(int argc, char **argv) {
 
 cout << "======== DNS =========== "<<"\n";
 
-/*
+
       if(d_flag == true)
       {
         char buf[16];
         memset(&dns_adress,0,sizeof(dns_adress));
-      //  if (inet_pton(AF_INET, dns, /*&_res.nsaddr_list[0].sin_addr*///buf))
-      //  {
-        //  res_init();
+        if (inet_pton(AF_INET, dns, /*&_res.nsaddr_list[0].sin_addr*/buf))
+        {
+          res_init();
         /*  result_for_dns = getaddrinfo(dns,NULL,&dns_adress,&dns_infoptr);
           if(result_for_dns != 0)
           {
@@ -323,7 +322,7 @@ cout << "======== DNS =========== "<<"\n";
           strcpy(&_res.nsaddr_list[0].sin_addr,dns_ptr->ai_addr);
           cout <<dns_addr->h_addr_list[0];
           _res.nscount = 1;*/
-      /*    if ((hostent_dns = gethostbyname(dns)) == NULL) {
+          if ((hostent_dns = gethostbyname(dns)) == NULL) {
               fprintf(stderr,"ERROR: no such host as %s\n", dns);
               exit(EXIT_FAILURE);
             }
@@ -340,7 +339,7 @@ cout << "======== DNS =========== "<<"\n";
           fprintf(stderr, "NO IP addres as %s\n",dns);
           exit(EXIT_FAILURE);
         }
-      }*/
+      }
 
     std::string result = getHostname(hostname);
 
@@ -354,7 +353,7 @@ cout << "======== DNS =========== "<<"\n";
     runDnsQuery(domenove_meno,ns_t_aaaa);
     runDnsQuery(domenove_meno,ns_t_a);
     std::string a_query = hostnameToIp(hostname);
-    cout<<"A: "<<a_query<<"\n";
+    cout<<"A MOJE\t"<<a_query<<"\n";
     runDnsQuery(domenove_meno,ns_t_ns);
     runDnsQuery(domenove_meno,ns_t_mx);
     std::string vypis = runDnsQuery(domenove_meno,ns_t_soa);
@@ -547,7 +546,7 @@ cout << "======== DNS =========== "<<"\n";
       input = buf;
 
       cout << "====== WHOIS: "<<whois_domena <<"===========\n";
-      //cout << input;
+      cout << input;
       PrintRegexMatch(input,inetnumReg);
       PrintRegexMatch(input,netnameReg);
       /*CIDR in whois.arin.net because i liked it*/
