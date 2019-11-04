@@ -118,7 +118,7 @@ std::string runDnsQuery(const char *dname, int nType)
     // /
       //  cout <<"AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
 
-        //printf("%s \n", dispbuf);
+      //  printf("%s \n", dispbuf);
 
 
         PrintRegexMatch(dispbuf,ns_dns);
@@ -138,6 +138,38 @@ std::string runDnsQuery(const char *dname, int nType)
     std::string vypis;
     vypis += dispbuf;
     return vypis;
+
+}
+std::string  resolvePtr(const char* dname)
+{
+  in_addr_t addr4;
+  register int i;
+  int ipAddr[4] = {0,0,0,0};
+  char buf[N];
+  std::string nRet;
+  if((addr4 = inet_network(dname)) != -1){
+    for(i = 0; addr4; ){
+      ipAddr[i++] = addr4 & 0xFF;
+      addr4 >>= 8;
+
+    }
+    sprintf(buf,"%u.%u.%u.%u.in-addr.arpa",ipAddr[i % 4], ipAddr[(i+1) % 4], ipAddr[(i+2) % 4], ipAddr[(i+3) % 4]);
+    nRet = runDnsQuery(buf,ns_t_ptr);
+    //cout << buf;
+    cout << nRet<<"\n";
+
+  }
+/*  else{
+
+    runDnsQuery(dname,ns_t_a);
+    nRet = runDnsQuery(dname,ns_t_mx);
+    cout <<"AAAAAAAAAAAAAAAAAAAAAAAAAa"<< nRet <<"\n";
+  }
+*/
+
+
+  return nRet;
+
 
 }
 
@@ -287,7 +319,7 @@ cout << "======== DNS =========== "<<"\n";
 
     const char *domenove_meno = result.c_str(); //www.mobilmania.cz
     const char *domain = str3.c_str(); //mobilmania.cz
-
+    resolvePtr(hostname);
     runDnsQuery(domenove_meno,ns_t_aaaa);
     runDnsQuery(domenove_meno,ns_t_a);
     runDnsQuery(domenove_meno,ns_t_ns);
