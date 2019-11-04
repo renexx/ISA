@@ -83,6 +83,35 @@ std::string getHostname(const char *domName)
     return ip;
 
 }
+std::string  hostnameToIp(const char *domName)
+{
+  struct addrinfo client_adress, *client_infoptr, *client_ptr;
+  int result_for_client;
+  memset(&client_adress,0,sizeof(client_adress));
+  client_adress.ai_family = AF_INET;
+  client_adress.ai_socktype = SOCK_STREAM;
+  client_adress.ai_protocol = IPPROTO_TCP;
+  char hostname[100];
+  strcpy(hostname,domName);
+  result_for_client = getaddrinfo(hostname,NULL,&client_adress,&client_infoptr);
+  if(result_for_client != 0)
+  {
+      fprintf(stderr, "%s: %s\n", hostname, gai_strerror(result_for_client));
+      exit(EXIT_FAILURE);
+  }
+  for(client_ptr = client_infoptr; client_ptr != NULL; client_ptr = client_ptr->ai_next)
+  {
+      getnameinfo(client_ptr->ai_addr,client_ptr->ai_addrlen,hostname,sizeof(hostname),NULL,0,NI_NUMERICHOST);
+
+  }
+  std::string ip;
+  ip += hostname;
+  freeaddrinfo(client_infoptr);
+  return ip;
+}
+
+
+
 std::string runDnsQuery(const char *dname, int nType)
 {
 
@@ -100,7 +129,7 @@ std::string runDnsQuery(const char *dname, int nType)
 
     std::regex mx_dns("MX.+[a-zA-Z]");
     std::regex ns_dns("NS.+\\S");
-    std::regex ptr_dns("\\sPTR.*");
+  //  std::regex ptr_dns("\\sPTR.*");
     std::regex cname_dns("CNAME.*");
 // HEADER
     std::cmatch m;
@@ -130,7 +159,7 @@ std::string runDnsQuery(const char *dname, int nType)
         //}
         PrintRegexMatch(dispbuf,mx_dns);
 
-        PrintRegexMatch(dispbuf,ptr_dns);
+        //PrintRegexMatch(dispbuf,ptr_dns);
 
 
     }
@@ -140,6 +169,7 @@ std::string runDnsQuery(const char *dname, int nType)
     return vypis;
 
 }
+/*From Mr. Matouska book Kapitola 3. System DNS strana 128 funkcia resolve*/
 std::string  resolvePtr(const char* dname)
 {
   in_addr_t addr4;
@@ -192,9 +222,10 @@ int main(int argc, char **argv) {
 
     int i = 0;
     int msg_size;
-    struct addrinfo whois_server, *whois_infoptr, *whois_ptr, client_adress, *client_infoptr, *client_ptr;
+    struct addrinfo whois_server, *whois_infoptr, *whois_ptr;
+    //struct addrinfo client_adress, *client_infoptr, *client_ptr;
     struct addrinfo dns_adress, *dns_infoptr, *dns_ptr;
-    int result_for_whois, result_for_client,result_for_dns;
+    int result_for_whois, /*result_for_client*/result_for_dns;
 
     string input;
     std::regex inetnumReg("(inetnum:.*|netrange:.*|nethandle:.*)",std::regex_constants::icase);
@@ -322,6 +353,8 @@ cout << "======== DNS =========== "<<"\n";
     resolvePtr(hostname);
     runDnsQuery(domenove_meno,ns_t_aaaa);
     runDnsQuery(domenove_meno,ns_t_a);
+    std::string a_query = hostnameToIp(hostname);
+    cout<<"A: "<<a_query<<"\n";
     runDnsQuery(domenove_meno,ns_t_ns);
     runDnsQuery(domenove_meno,ns_t_mx);
     std::string vypis = runDnsQuery(domenove_meno,ns_t_soa);
@@ -392,7 +425,7 @@ cout << "======== DNS =========== "<<"\n";
      }
     // cout <<"\n\n\nWHOIS IP ADDRESS:\t " << whois << "\n";
 
-     memset(&client_adress,0,sizeof(client_adress));
+     /*memset(&client_adress,0,sizeof(client_adress));
      client_adress.ai_family = AF_INET;
      client_adress.ai_socktype = SOCK_STREAM;
      client_adress.ai_protocol = IPPROTO_TCP;
@@ -407,19 +440,21 @@ cout << "======== DNS =========== "<<"\n";
      {
          getnameinfo(client_ptr->ai_addr,client_ptr->ai_addrlen,hostname,sizeof(hostname),NULL,0,NI_NUMERICHOST);
 
-     }
+     }*/
     /* inet_pton(AF_INET, hostname, &klient_adress);
      he = gethostbyaddr(&klient_adress, sizeof(klient_adress),AF_INET);
      printf("Host name: %s\n", he->h_name);*/
 
-
-    cout << "A: " << hostname << "\n";
+    std::string ip_hostname = hostnameToIp(hostname);
+    const char *neviem = ip_hostname.c_str();
+  //  cout << "IPJe " << neviem <<"\n";
+  //  cout << "A: " << hostname << "\n";
     std::string whois_domena = getHostname(whois);
     const char* dpc = whois_domena.c_str();
 
     if(strcmp(dpc,"whois.nic.cz") == 0)
     {
-      std::string inputforniccz = getHostname(hostname);
+      std::string inputforniccz = getHostname(neviem);
 
       const char *jebnenma = inputforniccz.c_str();
       if(std::regex_search(inputforniccz,m,std::regex("(www.)")) == true) // ak najde SOA tak to cele sparsuje
@@ -494,7 +529,7 @@ cout << "======== DNS =========== "<<"\n";
     }
     else
     {
-      strcpy(buf,hostname);
+      strcpy(buf,neviem);
       strcat(buf,"\r\n");//<CR><LF>
       //  cout << buf;
 
@@ -531,7 +566,7 @@ cout << "======== DNS =========== "<<"\n";
     printf("\n\n* Closing client socket ...\n");
     //free(daco);
     freeaddrinfo(whois_infoptr);
-    freeaddrinfo(client_infoptr);
+    //freeaddrinfo(client_infoptr);
     freeaddrinfo(dns_infoptr);
     return 0;
 
