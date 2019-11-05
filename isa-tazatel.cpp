@@ -102,7 +102,7 @@ std::string  hostnameToIp(const char *domName)
   for(client_ptr = client_infoptr; client_ptr != NULL; client_ptr = client_ptr->ai_next)
   {
       getnameinfo(client_ptr->ai_addr,client_ptr->ai_addrlen,hostname,sizeof(hostname),NULL,0,NI_NUMERICHOST);
-
+      //puts(hostname);
   }
   std::string ip;
   ip += hostname;
@@ -123,7 +123,7 @@ std::string runDnsQuery(const char *dname, int nType)
     int msg_size;
 
 
-    std::regex a_dns("(\\sA)(.+[[:digit:]])\\.(.+)");
+    std::regex a_dns("(A).[1-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?");
     std::regex aaaa_dns("(AAAA)(.+)");
 
     std::regex mx_dns("MX.+[a-zA-Z]");
@@ -152,7 +152,7 @@ std::string runDnsQuery(const char *dname, int nType)
         PrintRegexMatch(dispbuf,ns_dns);
         PrintRegexMatch(dispbuf,aaaa_dns);
         PrintRegexMatch(dispbuf,cname_dns);
-      //  PrintRegexMatch(dispbuf,a_dns);
+        PrintRegexMatch(dispbuf,a_dns);
         //if(daco == 0){
           //cout << "nebolo najdene a\n";
         //}
@@ -189,7 +189,6 @@ std::string  resolvePtr(const char* dname)
 
   }
 /*  else{
-
     runDnsQuery(dname,ns_t_a);
     nRet = runDnsQuery(dname,ns_t_mx);
     cout <<"AAAAAAAAAAAAAAAAAAAAAAAAAa"<< nRet <<"\n";
@@ -351,9 +350,9 @@ cout << "======== DNS =========== "<<"\n";
     const char *domain = str3.c_str(); //mobilmania.cz
     resolvePtr(hostname);
     runDnsQuery(domenove_meno,ns_t_aaaa);
-    //runDnsQuery(domenove_meno,ns_t_a);
-    std::string a_query = hostnameToIp(hostname);
-    cout<<"A MOJE\t"<<a_query<<"\n";
+    runDnsQuery(domenove_meno,ns_t_a);
+    //std::string a_query = hostnameToIp(hostname);
+  //  cout<<"A MOJE\t"<<a_query<<"\n";
     runDnsQuery(domenove_meno,ns_t_ns);
     runDnsQuery(domenove_meno,ns_t_mx);
     std::string vypis = runDnsQuery(domenove_meno,ns_t_soa);
@@ -428,7 +427,6 @@ cout << "======== DNS =========== "<<"\n";
      client_adress.ai_family = AF_INET;
      client_adress.ai_socktype = SOCK_STREAM;
      client_adress.ai_protocol = IPPROTO_TCP;
-
      result_for_client = getaddrinfo(hostname,NULL,&client_adress,&client_infoptr);
      if(result_for_client != 0)
      {
@@ -438,7 +436,6 @@ cout << "======== DNS =========== "<<"\n";
      for(client_ptr = client_infoptr; client_ptr != NULL; client_ptr = client_ptr->ai_next)
      {
          getnameinfo(client_ptr->ai_addr,client_ptr->ai_addrlen,hostname,sizeof(hostname),NULL,0,NI_NUMERICHOST);
-
      }*/
     /* inet_pton(AF_INET, hostname, &klient_adress);
      he = gethostbyaddr(&klient_adress, sizeof(klient_adress),AF_INET);
