@@ -152,7 +152,7 @@ std::string runDnsQuery(const char *dname, int nType)
         PrintRegexMatch(dispbuf,ns_dns);
         PrintRegexMatch(dispbuf,aaaa_dns);
         PrintRegexMatch(dispbuf,cname_dns);
-        PrintRegexMatch(dispbuf,a_dns);
+      //  PrintRegexMatch(dispbuf,a_dns);
         //if(daco == 0){
           //cout << "nebolo najdene a\n";
         //}
@@ -351,7 +351,7 @@ cout << "======== DNS =========== "<<"\n";
     const char *domain = str3.c_str(); //mobilmania.cz
     resolvePtr(hostname);
     runDnsQuery(domenove_meno,ns_t_aaaa);
-    runDnsQuery(domenove_meno,ns_t_a);
+    //runDnsQuery(domenove_meno,ns_t_a);
     std::string a_query = hostnameToIp(hostname);
     cout<<"A MOJE\t"<<a_query<<"\n";
     runDnsQuery(domenove_meno,ns_t_ns);
@@ -546,7 +546,7 @@ cout << "======== DNS =========== "<<"\n";
       input = buf;
 
       cout << "====== WHOIS: "<<whois_domena <<"===========\n";
-      cout << input;
+      //cout << input;
       PrintRegexMatch(input,inetnumReg);
       PrintRegexMatch(input,netnameReg);
       /*CIDR in whois.arin.net because i liked it*/
