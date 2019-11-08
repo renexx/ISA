@@ -132,21 +132,22 @@ std::string runDnsQuery(const char *dname, int nType)
     std::regex cname_dns("CNAME.*");
 // HEADER
     std::cmatch m;
-    l = res_search(dname,ns_c_any,nType,nsbuf,sizeof(nsbuf));
-    //if(l < 0)
-    //{
-      //  perror("d");
-    //}
-    ns_initparse(nsbuf,l,&msg);
+    l = res_search(dname,ns_c_in,nType,nsbuf,sizeof(nsbuf)); //c_in internet
+    if(l < 0)
+    {
+        perror("d  ");
+    }
+    if(ns_initparse(nsbuf,l,&msg) < 0) perror("NS_INITPARSE ");
     l= ns_msg_count(msg,ns_s_an);
     for(x = 0; x < l; x++)
     {
-        ns_parserr(&msg, ns_s_an, x, &rr);
+        if(ns_parserr(&msg, ns_s_an, x, &rr) < 0) perror("NS PARSERR : "); // ns parrserr extrahuje informacie o zazname odpovedi a ulozi ho do rr čo je parameter odovzdany do inych rutinnych kniznic
+
         ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
     // /
       //  cout <<"AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
 
-      //  printf("%s \n", dispbuf);
+        printf("%s \n", dispbuf);
 
 
         PrintRegexMatch(dispbuf,ns_dns);
@@ -185,7 +186,7 @@ std::string  resolvePtr(const char* dname)
     sprintf(buf,"%u.%u.%u.%u.in-addr.arpa",ipAddr[i % 4], ipAddr[(i+1) % 4], ipAddr[(i+2) % 4], ipAddr[(i+3) % 4]);
     nRet = runDnsQuery(buf,ns_t_ptr);
     //cout << buf;
-    cout << nRet<<"\n";
+    cout <<"PTR " << nRet<<"\n";
 
   }
 /*  else{
