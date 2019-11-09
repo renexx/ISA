@@ -90,7 +90,7 @@ std::string  hostnameToIp(const char *domName)
   memset(&client_adress,0,sizeof(client_adress));
   client_adress.ai_family = AF_INET;
   client_adress.ai_socktype = SOCK_STREAM;
-  client_adress.ai_protocol = IPPROTO_TCP;
+  client_adress.ai_protocol = 0;
   char hostname[100];
   strcpy(hostname,domName);
   result_for_client = getaddrinfo(hostname,NULL,&client_adress,&client_infoptr);
@@ -119,9 +119,9 @@ std::string runDnsQuery(const char *dname, int nType)
     ns_msg msg;
     ns_rr rr;
 
-    int x, l;
+    int x, l,msgcount;
     int msg_size;
-
+    const u_char *p;
 
     std::regex a_dns("(A).[1-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?");
     std::regex aaaa_dns("(AAAA)(.+)");
@@ -132,22 +132,33 @@ std::string runDnsQuery(const char *dname, int nType)
     std::regex cname_dns("CNAME.*");
 // HEADER
     std::cmatch m;
-    l = res_search(dname,ns_c_in,nType,nsbuf,sizeof(nsbuf)); //c_in internet
+    l = res_search(dname,ns_c_in,nType,nsbuf,N); //c_in internet
     if(l < 0)
     {
-        perror("d  ");
+  //      perror("d  ");
     }
-    if(ns_initparse(nsbuf,l,&msg) < 0) perror("NS_INITPARSE ");
-    l= ns_msg_count(msg,ns_s_an);
-    for(x = 0; x < l; x++)
+    ns_initparse(nsbuf,l,&msg);// perror("NS_INITPARSE ");
+    //msgcount= ns_msg_count(msg,ns_s_an);
+    for(x = 0; x < ns_msg_count(msg,ns_s_an); x++)
     {
-        if(ns_parserr(&msg, ns_s_an, x, &rr) < 0) perror("NS PARSERR : "); // ns parrserr extrahuje informacie o zazname odpovedi a ulozi ho do rr čo je parameter odovzdany do inych rutinnych kniznic
+        ns_parserr(&msg, ns_s_an, x, &rr);// perror("NS PARSERR : "); // ns parrserr extrahuje informacie o zazname odpovedi a ulozi ho do rr čo je parameter odovzdany do inych rutinnych kniznic
 
         ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
+
+
+
+      //ALEBO TOTO A ANI JEDNO NEJDE  switch(ns_rr_type(rr)){
+        /*  case ns_t_a:
+              struct in_addr in;
+              memcpy(&in.s_addr,ns_rr_rdata(rr),sizeof(in.s_addr));
+              cout << "A: "<< inet_ntoa(in) <<"\n";
+              break;
+        }*/
+
     // /
       //  cout <<"AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
 
-        printf("%s \n", dispbuf);
+      //  printf("%s \n", dispbuf);
 
 
         PrintRegexMatch(dispbuf,ns_dns);
@@ -396,7 +407,7 @@ cout << "======== DNS =========== "<<"\n";
      memset(&whois_server,0,sizeof(whois_server));  //nastavy dany pocet bytov na hodnotu uvedenu v parametri c
      whois_server.ai_family = AF_INET;
      whois_server.ai_socktype = SOCK_STREAM;
-     whois_server.ai_protocol = IPPROTO_TCP;
+     whois_server.ai_protocol = 0; // IPPROTO_TCP
 
      result_for_whois = getaddrinfo(whois,"43",&whois_server,&whois_infoptr);
      if(result_for_whois != 0)
