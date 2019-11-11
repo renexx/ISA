@@ -38,19 +38,19 @@ void print_usage()
     exit(2);
 }
 
-int PrintRegexMatch(std::string str, std::regex reg)
+void PrintRegexMatch(std::string str, std::regex reg)
 {
     std::smatch match;
-    int counter = 0;
+    //int counter = 0;
     //std::cout << std::boolalpha;
     while(std::regex_search(str,match,reg))
     {
         std::cout << match.str() << "\n";
         str = match.suffix().str();
       //  cout<<"TOTO JE MATCH"<< match[2];
-      counter++;
+      //counter++;
     }
-    return counter;
+    //return counter;
 }
 std::string getHostname(const char *domName)
 {
@@ -147,8 +147,8 @@ std::string runDnsQuery(const char *dname, int nType)
 
 
 
-      //ALEBO TOTO A ANI JEDNO NEJDE  switch(ns_rr_type(rr)){
-        /*  case ns_t_a:
+    /*  switch(ns_rr_type(rr)){
+          case ns_t_a:
               struct in_addr in;
               memcpy(&in.s_addr,ns_rr_rdata(rr),sizeof(in.s_addr));
               cout << "A: "<< inet_ntoa(in) <<"\n";
@@ -200,12 +200,13 @@ std::string  resolvePtr(const char* dname)
     cout <<"PTR " << nRet<<"\n";
 
   }
-/*  else{
-    runDnsQuery(dname,ns_t_a);
-    nRet = runDnsQuery(dname,ns_t_mx);
-    cout <<"AAAAAAAAAAAAAAAAAAAAAAAAAa"<< nRet <<"\n";
+ else{
+    //nRet = runDnsQuery(dname,ns_t_a);
+    //nRet = runDnsQuery(dname,ns_t_aaaa);
+  //  nRet = runDnsQuery(dname,ns_t_mx);
+//    cout <<"AAAAAAAAAAAAAAAAAAAAAAAAAa"<< nRet <<"\n";
   }
-*/
+
 
 
   return nRet;
@@ -361,13 +362,12 @@ cout << "======== DNS =========== "<<"\n";
     const char *domenove_meno = result.c_str(); //www.mobilmania.cz
     const char *domain = str3.c_str(); //mobilmania.cz
     resolvePtr(hostname);
-    runDnsQuery(domenove_meno,ns_t_aaaa);
-    runDnsQuery(domenove_meno,ns_t_a);
-    //std::string a_query = hostnameToIp(hostname);
-  //  cout<<"A MOJE\t"<<a_query<<"\n";
-    runDnsQuery(domenove_meno,ns_t_ns);
-    runDnsQuery(domenove_meno,ns_t_mx);
+    std::string a = runDnsQuery(domenove_meno,ns_t_a);
+    std::string aaaa = runDnsQuery(domenove_meno,ns_t_aaaa);
+    std::string mx_query = runDnsQuery(domenove_meno,ns_t_mx);
+    std::string ns_query = runDnsQuery(domenove_meno,ns_t_ns);
     std::string vypis = runDnsQuery(domenove_meno,ns_t_soa);
+    std::string cname = runDnsQuery(domenove_meno,ns_t_cname);
     //cout << domenove_meno << "\n";
     std::smatch m;
     std::regex soa_email("(SOA)(.+)\\.\\s(.+)(.+)(.+)(.+)\\.");
