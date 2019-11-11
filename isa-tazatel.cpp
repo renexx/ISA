@@ -313,39 +313,43 @@ cout << "======== DNS =========== "<<"\n";
     std::smatch m;
   //  std::string error;
     std::regex soa_email("(SOA)(.+)\\.\\s(.+)(.+)(.+)(.+)\\."); // Regex na SOA
-    if(soa_query != "ERROR")
+    if(soa_query == "ERROR")
     {
-      if(std::regex_search(soa_query,m,soa_email) == true) // ak najde SOA tak to cele sparsuje
-      {
-
-        std::string match1 = m[1]; //SOA
-        std::string match2 = m[2]; // druha cela cast napriklad guta.fit.vutbr.cz
-        std::string match3 = m[3]; // admin mail teda michal.fit.vutbr.cz
-        std::string match4 = m[4]; // .
-        std::string match5 = m[5]; // c
-        std::string match6 = m[6]; // z
-        // spojenie stringov pomocou stringstreamu
-        std::stringstream admin_mail,soa;
-        soa << match1 << "   " << match2<<"."; // vysledok SOA guta.fit.vutbr.cz.
-        std::string soa_result = soa.str();
-        cout << soa_result << "\n";
-
-        std::string replaceDot("."); // nahradenie bodky za @
-        size_t positionDot = match3.find(replaceDot); //najdeme si poziciu kde sa bodka nachadza
-        std::string replacnutedot = match3.replace(positionDot,replaceDot.length(),"@"); // nahradimu ju za zavinac za prvy vyskyt (replaceDot.length())
-
-        admin_mail<<"admin email "  << replacnutedot << match4 << match5 << match6 << "."<< "\n"; // spajanie pomoocu stringstream
-        std::string admin_mail_result = admin_mail.str();
-        cout << admin_mail_result << "\n"; //vysledok michal@fit.vutbr.cz.
-      }
-      else // ak nenajde SOA tak by sme sa mali opytat v authority section a ziskat authority answer
-      {
-        printf("SOA RECORDS IS NOT FOUND pls try entry a domain no domain name\n"); // ak nenajde tak vyhodi hlasku
-      }
-
+      cout<<"AJAJAJ\n";
+      //continue;
     }
-    else
-      cout << "ERRROR neni SOA\n";
+
+
+    if(std::regex_search(soa_query,m,soa_email) == true) // ak najde SOA tak to cele sparsuje
+    {
+
+      std::string match1 = m[1]; //SOA
+      std::string match2 = m[2]; // druha cela cast napriklad guta.fit.vutbr.cz
+      std::string match3 = m[3]; // admin mail teda michal.fit.vutbr.cz
+      std::string match4 = m[4]; // .
+      std::string match5 = m[5]; // c
+      std::string match6 = m[6]; // z
+        // spojenie stringov pomocou stringstreamu
+      std::stringstream admin_mail,soa;
+      soa << match1 << "   " << match2<<"."; // vysledok SOA guta.fit.vutbr.cz.
+      std::string soa_result = soa.str();
+      cout << soa_result << "\n";
+
+      std::string replaceDot("."); // nahradenie bodky za @
+      size_t positionDot = match3.find(replaceDot); //najdeme si poziciu kde sa bodka nachadza
+      std::string replacnutedot = match3.replace(positionDot,replaceDot.length(),"@"); // nahradimu ju za zavinac za prvy vyskyt (replaceDot.length())
+
+      admin_mail<<"admin email "  << replacnutedot << match4 << match5 << match6 << "."<< "\n"; // spajanie pomoocu stringstream
+      std::string admin_mail_result = admin_mail.str();
+      cout << admin_mail_result << "\n"; //vysledok michal@fit.vutbr.cz.
+    }
+    else // ak nenajde SOA tak by sme sa mali opytat v authority section a ziskat authority answer
+    {
+      printf("SOA RECORDS IS NOT FOUND pls try entry a domain no domain name\n"); // ak nenajde tak vyhodi hlasku
+      
+    }
+
+
 
    /* NASLEDNE prevod domenoveho mena na IP adresu pomocou getaddrinfo a nasledne vytovrenie spojenia pomocou socket */
      memset(&whois_server,0,sizeof(whois_server));  //nastavy dany pocet bytov na hodnotu uvedenu v parametri c cize na 0 a vynulujeme
