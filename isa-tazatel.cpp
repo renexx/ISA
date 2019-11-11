@@ -61,13 +61,13 @@ std::string getHostname(const char *domName)
 {
     struct sockaddr_in server_address, klient_adress;
     memset(&klient_adress, 0, sizeof klient_adress);
-    klient_adress.sin_family = AF_INET;
+    klient_adress.sin_family = AF_UNSPEC;
     char domain_name[100];
     strcpy(domain_name,domName);
     memset(&klient_adress, 0, sizeof klient_adress);
-    klient_adress.sin_family = AF_INET;
+    klient_adress.sin_family = AF_UNSPEC;
 
-    inet_pton(AF_INET, domain_name, &klient_adress.sin_addr);
+    inet_pton(AF_UNSPEC, domain_name, &klient_adress.sin_addr);
 
     int result = getnameinfo((struct sockaddr*)&klient_adress,sizeof(klient_adress),domain_name,sizeof(domain_name),NULL,0,NI_NAMEREQD);
 
@@ -82,7 +82,7 @@ std::string  hostnameToIp(const char *domName)
   struct addrinfo client_adress, *client_infoptr, *client_ptr;
   int result_for_client;
   memset(&client_adress,0,sizeof(client_adress));
-  client_adress.ai_family = AF_INET;
+  client_adress.ai_family = AF_UNSPEC;
   client_adress.ai_socktype = SOCK_STREAM;
   client_adress.ai_protocol = 0;
   char hostname[100];
@@ -379,9 +379,26 @@ cout << "======== DNS =========== "<<"\n";
 
    /* NASLEDNE prevod domenoveho mena na IP adresu pomocou getaddrinfo a nasledne vytovrenie spojenia pomocou socket */
      memset(&whois_server,0,sizeof(whois_server));  //nastavy dany pocet bytov na hodnotu uvedenu v parametri c cize na 0 a vynulujeme
-     whois_server.ai_family = AF_INET; // IPV4
+     whois_server.ai_family = AF_UNSPEC; // IPV4
      whois_server.ai_socktype = SOCK_STREAM; // TCP
      whois_server.ai_protocol = 0; // implicitna hodnota 0, ktorá spôsobi priradenie vhodného protokolu či už to TCP alebo UDP
+     struct in6_addr serveraddr;
+
+     result_for_whois = inet_pton(AF_INET,whois,&serveraddr);
+     if(result_for_whois == 1) /*valid ipv4 text address*/
+     {
+       whois_server.ai_family = AF_INET;
+       whois_server.ai_flags |= AI_NUMERICHOST;
+     }
+     else
+     {
+       result_for_whois = inet_pton(AF_INET6,whois,&serveraddr);
+       if(result_for_whois == 1)
+       {
+         whois_server.ai_family = AF_INET6;
+         whois_server.ai_flags |= AI_NUMERICHOST;
+       }
+     }
 
      result_for_whois = getaddrinfo(whois,"43",&whois_server,&whois_infoptr); // preklad domenove mena na IP
      if(result_for_whois != 0)
@@ -389,19 +406,20 @@ cout << "======== DNS =========== "<<"\n";
          fprintf(stderr, "%s: %s\n", whois, gai_strerror(result_for_whois));
          exit(EXIT_FAILURE);
      }
-
+     cout<<"JA SOM: " <<whois<<"\n";
      for(whois_ptr = whois_infoptr; whois_ptr != NULL; whois_ptr = whois_ptr->ai_next)
      {
          getnameinfo(whois_ptr->ai_addr,whois_ptr->ai_addrlen,whois,sizeof(whois),NULL,0,NI_NUMERICHOST);
          /* Vytvoreni soketu a inicializovanie soketu*/
-         if ((client_socket = socket(whois_infoptr->ai_family, whois_infoptr->ai_socktype, whois_infoptr->ai_protocol)) <= 0) /*AF_INET = IPv4, SOCK_STREAM = TCP, 0 je protokol 0 implicitne vybere podla SOCK_STREAM, inak IPPROTO_TCP*/
+         cout<<"JA SOM tu: " <<whois<<"\n";
+         if ((client_socket = socket(whois_infoptr->ai_family, whois_infoptr->ai_socktype, whois_infoptr->ai_protocol)) <= 0) /*AF_UNSPEC = IPv4, SOCK_STREAM = TCP, 0 je protokol 0 implicitne vybere podla SOCK_STREAM, inak IPPROTO_TCP*/
          {
              perror("ERROR 224: socket");
              exit(EXIT_FAILURE);
          }
-
+         cout<<"JA SOM neviem: " <<whois<<"\n";
          /*Aktivne otvorenie na strane klienta, druhy parameter funkcie obsahuje ip adresu a port servera*/
-         if (connect(client_socket, whois_ptr->ai_addr, whois_ptr->ai_addrlen) != 0)
+         if (connect(client_socket, whois_infoptr->ai_addr, whois_infoptr->ai_addrlen) != 0)
          {
              perror("ERROR 231: connect");
              exit(EXIT_FAILURE);
