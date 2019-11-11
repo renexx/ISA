@@ -174,6 +174,46 @@ std::string  resolvePtr(const char* dname)
 
 }
 
+static bool soa_parser(std::string soa_query)
+{
+  // parsovanie SOA zaznamu, kvoli ziskaniu admin emailu
+    std::smatch m;
+  //  std::string error;
+    std::regex soa_email("(SOA)(.+)\\.\\s(.+)(.+)(.+)(.+)\\."); // Regex na SOA
+    if(soa_query == "ERROR")
+    {
+      cout<<"";
+    //  continue;
+    }
+    if(std::regex_search(soa_query,m,soa_email) == true) // ak najde SOA tak to cele sparsuje
+    {
+
+      std::string match1 = m[1]; //SOA
+      std::string match2 = m[2]; // druha cela cast napriklad guta.fit.vutbr.cz
+      std::string match3 = m[3]; // admin mail teda michal.fit.vutbr.cz
+      std::string match4 = m[4]; // .
+      std::string match5 = m[5]; // c
+      std::string match6 = m[6]; // z
+        // spojenie stringov pomocou stringstreamu
+      std::stringstream admin_mail,soa;
+      soa << match1 << "   " << match2<<"."; // vysledok SOA guta.fit.vutbr.cz.
+      std::string soa_result = soa.str();
+      cout << soa_result << "\n";
+
+      std::string replaceDot("."); // nahradenie bodky za @
+      size_t positionDot = match3.find(replaceDot); //najdeme si poziciu kde sa bodka nachadza
+      std::string replacnutedot = match3.replace(positionDot,replaceDot.length(),"@"); // nahradimu ju za zavinac za prvy vyskyt (replaceDot.length())
+
+      admin_mail<<"admin email "  << replacnutedot << match4 << match5 << match6 << "."<< "\n"; // spajanie pomoocu stringstream
+      std::string admin_mail_result = admin_mail.str();
+      cout << admin_mail_result << "\n"; //vysledok michal@fit.vutbr.cz.
+      return true;
+    }
+    else
+      return false;
+}
+
+
 int main(int argc, char **argv) {
     int option;
     int client_socket, port_number, bytenasend, byteread;
@@ -308,46 +348,32 @@ cout << "======== DNS =========== "<<"\n";
     std::string ns_query = runDnsQuery(domenove_meno,ns_t_ns); // NS zaznam
     std::string soa_query = runDnsQuery(domenove_meno,ns_t_soa); // SOA zaznam
     std::string cname = runDnsQuery(domenove_meno,ns_t_cname); // CNAME zaznam
-
-  // parsovanie SOA zaznamu, kvoli ziskaniu admin emailu
     std::smatch m;
-  //  std::string error;
-    std::regex soa_email("(SOA)(.+)\\.\\s(.+)(.+)(.+)(.+)\\."); // Regex na SOA
-    if(soa_query == "ERROR")
+    if(soa_parser(soa_query) == false)
     {
-      cout<<"AJAJAJ\n";
-      //continue;
+      std::string soa_query_authority = runDnsQuery(domain,ns_t_soa);
+      soa_parser(soa_query_authority);
+
     }
 
+  /*    u_char nsbuf[N];
+      char dispbuf[N];
+      ns_msg msg;
+      ns_rr rr;
+      int x, l;
+      int msg_size;
 
-    if(std::regex_search(soa_query,m,soa_email) == true) // ak najde SOA tak to cele sparsuje
-    {
 
-      std::string match1 = m[1]; //SOA
-      std::string match2 = m[2]; // druha cela cast napriklad guta.fit.vutbr.cz
-      std::string match3 = m[3]; // admin mail teda michal.fit.vutbr.cz
-      std::string match4 = m[4]; // .
-      std::string match5 = m[5]; // c
-      std::string match6 = m[6]; // z
-        // spojenie stringov pomocou stringstreamu
-      std::stringstream admin_mail,soa;
-      soa << match1 << "   " << match2<<"."; // vysledok SOA guta.fit.vutbr.cz.
-      std::string soa_result = soa.str();
-      cout << soa_result << "\n";
+      l = res_search(domenove_meno,ns_c_in,ns_t_soa,nsbuf,N); //c_in internet N je velkost odpovedoveho bufra nsbuf
 
-      std::string replaceDot("."); // nahradenie bodky za @
-      size_t positionDot = match3.find(replaceDot); //najdeme si poziciu kde sa bodka nachadza
-      std::string replacnutedot = match3.replace(positionDot,replaceDot.length(),"@"); // nahradimu ju za zavinac za prvy vyskyt (replaceDot.length())
+      ns_initparse(nsbuf,l,&msg);// perror("NS_INITPARSE ");
 
-      admin_mail<<"admin email "  << replacnutedot << match4 << match5 << match6 << "."<< "\n"; // spajanie pomoocu stringstream
-      std::string admin_mail_result = admin_mail.str();
-      cout << admin_mail_result << "\n"; //vysledok michal@fit.vutbr.cz.
-    }
-    else // ak nenajde SOA tak by sme sa mali opytat v authority section a ziskat authority answer
-    {
-      printf("SOA RECORDS IS NOT FOUND pls try entry a domain no domain name\n"); // ak nenajde tak vyhodi hlasku
-      
-    }
+      for(x = 0; x < ns_msg_count(msg,ns_s_ns); x++)
+      {
+          ns_parserr(&msg, ns_s_ns, x, &rr);
+          ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
+
+      }*/
 
 
 
