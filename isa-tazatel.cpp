@@ -60,16 +60,17 @@ void PrintRegexMatch(std::string str, std::regex reg)
 std::string getHostname(const char *domName)
 {
     struct sockaddr_in server_address, klient_adress;
+    //struct sockaddr_in6 klient_ipv6adress;
+  //  memset(&klient_ipv6adress,0,sizeof(klient_ipv6adress));
     memset(&klient_adress, 0, sizeof klient_adress);
-    klient_adress.sin_family = AF_UNSPEC;
+    klient_adress.sin_family = AF_INET;
+//    klient_ipv6adress.sin6_family = AF_INET6;
     char domain_name[100];
     strcpy(domain_name,domName);
-    memset(&klient_adress, 0, sizeof klient_adress);
-    klient_adress.sin_family = AF_UNSPEC;
 
-    inet_pton(AF_UNSPEC, domain_name, &klient_adress.sin_addr);
-
+    inet_pton(AF_INET, domain_name, &klient_adress.sin_addr);
     int result = getnameinfo((struct sockaddr*)&klient_adress,sizeof(klient_adress),domain_name,sizeof(domain_name),NULL,0,NI_NAMEREQD);
+
 
     std::string ip;
     ip += domain_name;
@@ -87,6 +88,7 @@ std::string  hostnameToIp(const char *domName)
   client_adress.ai_protocol = 0;
   char hostname[100];
   strcpy(hostname,domName);
+
   result_for_client = getaddrinfo(hostname,NULL,&client_adress,&client_infoptr);
   if(result_for_client != 0)
   {
@@ -335,12 +337,17 @@ cout << "======== DNS =========== "<<"\n";
 
     std::string result = getHostname(hostname); // prevedieme IP adresu na domenove meno pretože funkcie v runDnsQuery pracuju len s domenovym menom
  // orezanie www neni to potrebne nikde to nieje vyuzite moze sa to vymazat
+  //  cout<<"JA Som result " <<result<<"\n";
     std::string orezane = result;
+  //  cout<< "JA budem orezane "<<orezane<<"\n";
     std::size_t pos = orezane.find(".");
     std:string str3 = orezane.substr(pos + 1);
+  //  cout<<"ja som "<<str3<<"\n";
 
     const char *domenove_meno = result.c_str(); //www.mobilmania.cz
+  //  cout<<"Ja som domenove meno "<<domenove_meno<<"\n";
     const char *domain = str3.c_str(); //mobilmania.cz
+  //  cout<<"Ja som domena "<<domain<<"\n";
     std::string ptr_query =resolvePtr(hostname); // volanie funkci na rezoluciu PTR záznamu
     std::string aaaa = runDnsQuery(domenove_meno,ns_t_aaaa); //AAAA zaznam
     std::string a = runDnsQuery(domenove_meno,ns_t_a); // A zaznam
@@ -406,18 +413,23 @@ cout << "======== DNS =========== "<<"\n";
          fprintf(stderr, "%s: %s\n", whois, gai_strerror(result_for_whois));
          exit(EXIT_FAILURE);
      }
-     cout<<"JA SOM: " <<whois<<"\n";
+     //cout<<"JA som po getaddrinfo " <<whois<<"\n";
+     //cout<<result_for_whois<<"\n";
+     //cout<<whois_server<<"\n";
+     //cout<<whois_infoptr<<"\n";
+     char old_whois[100];
+     strcpy(old_whois,whois);
      for(whois_ptr = whois_infoptr; whois_ptr != NULL; whois_ptr = whois_ptr->ai_next)
      {
          getnameinfo(whois_ptr->ai_addr,whois_ptr->ai_addrlen,whois,sizeof(whois),NULL,0,NI_NUMERICHOST);
          /* Vytvoreni soketu a inicializovanie soketu*/
-         cout<<"JA SOM tu: " <<whois<<"\n";
+         //cout<<"JA SOM tu: " <<whois<<"\n";
          if ((client_socket = socket(whois_infoptr->ai_family, whois_infoptr->ai_socktype, whois_infoptr->ai_protocol)) <= 0) /*AF_UNSPEC = IPv4, SOCK_STREAM = TCP, 0 je protokol 0 implicitne vybere podla SOCK_STREAM, inak IPPROTO_TCP*/
          {
              perror("ERROR 224: socket");
              exit(EXIT_FAILURE);
          }
-         cout<<"JA SOM neviem: " <<whois<<"\n";
+         //cout<<"JA SOM neviem: " <<whois<<"\n";
          /*Aktivne otvorenie na strane klienta, druhy parameter funkcie obsahuje ip adresu a port servera*/
          if (connect(client_socket, whois_infoptr->ai_addr, whois_infoptr->ai_addrlen) != 0)
          {
@@ -425,26 +437,40 @@ cout << "======== DNS =========== "<<"\n";
              exit(EXIT_FAILURE);
          }
      }
-
+    // cout<<old_whois;
     std::string ip_hostname = hostnameToIp(hostname); // funkcia ktora prevedie domenove meno na IP
     const char *ip_adress = ip_hostname.c_str();
+  //  cout<<"JA SOM IP ADDRES PREVEDENA ale hostnameu cize -q : " <<ip_adress<<"\n";
 
-    std::string whois_domena = getHostname(whois); // funkcia, ktora ziska domenove meno z IP
-    const char* domena_for_whois = whois_domena.c_str();
+  //  std::string whois_domena = getHostname(whois); // funkcia, ktora ziska domenove meno z IP
+  //  cout<<"JA MAM DOMENOVE MENO Z IP ale whois " <<old_whois<<"\n";
+//    const char* domena_for_whois = whois_domena.c_str();
     // spracovanie whois.nic.cz ten bere len domeny
-    if(strcmp(domena_for_whois,"whois.nic.cz") == 0) // porovnava ci sa parameter -w nezhoduje s whois.nic.cz pretoze whois.nic.cz bere domeny preto tu musi byt vyjnimka
-    {
-      std::string input_for_niccz = getHostname(ip_adress);
 
+
+    if(strcmp(old_whois,"whois.nic.cz") == 0) // porovnava ci sa parameter -w nezhoduje s whois.nic.cz pretoze whois.nic.cz bere domeny preto tu musi byt vyjnimka
+    {
+      //cout<<"AK SA STRCMP ROVNA\n";
+      std::string input_for_niccz = getHostname(hostname);
+      //const char *input_domain_for_niccz = input_for_niccz.c_str();
+    //  cout<<"JA SOM STRING old_whois "<<old_whois<<"\n";
+    //  cout<<"JA SOM STRING result "<<input_for_niccz<<"\n";
+      std::smatch m;
       const char *input_domain_for_niccz = input_for_niccz.c_str();
       if(std::regex_search(input_for_niccz,m,std::regex("(www.)")) == true) // tu hladame pomocou regexu ci sa vo vstupe nachadza www. alebo nie ak ano tak musime orezat aby bolo bez wwww
       {
+        //cout<<"TU SOM\n";
         std::string orezane = result;
+        //cout<<"JA SOM STRING OREZANE "<<orezane<<"\n";
+
         std::size_t pos = input_for_niccz.find("."); // najdeme bodku
         std::string niccz_without_www = input_for_niccz.substr(pos + 1); // a zobereme to co je za bodkov cize o poziciu dalej
         const char *input_for_nic = niccz_without_www.c_str(); //mobilmania.cz
         strcpy(buf,input_for_nic); // do buffru nakopirujeme domenu uz bez www
         strcat(buf,"\r\n"); // whois podla rfc potrebuje \r\n
+        //cout<<"JA SOM bez www "<<input_for_nic<<"\n";
+      //  cout<<"JA SOM buf "<<buf<<"\n";
+
         bytenasend = send(client_socket, buf, strlen(buf),0); // poslanie poziadavky na server whois.nic.cz
         if (bytenasend == -1)
         {
@@ -455,22 +481,30 @@ cout << "======== DNS =========== "<<"\n";
             err(1,"initial read() failed");
         }
         input = buf;
-
-        cout << "====== WHOIS:"<< whois_domena <<"  ===========\n";
+      //  cout<<"ja som input "<<input<<"\n";
+        cout << "====== WHOIS: "<< old_whois <<"  ===========\n";
         //cout << input;
-        std::size_t position = input.find("domain:"); // hladame domain preto od tadial chceme vystup
-        std::string finaloutput = input.substr(position);
-        cout<<finaloutput<<"\n";
-        // REGEXY KTORE NIESU POTREBNE
-      /*  PrintRegexMatch(input,addressReg);
-        PrintRegexMatch(input,admin_cReg);
-        PrintRegexMatch(input,domianReg);
-        PrintRegexMatch(input,registrantReg);
-        PrintRegexMatch(input,registrarReg);
-        PrintRegexMatch(input,orgReg);
-        PrintRegexMatch(input,nameReg);
-        PrintRegexMatch(input,contactReg);
-        PrintRegexMatch(input,nserverReg);*/
+        if(std::regex_search(input,m,std::regex("(domain:)")) == true){
+          std::size_t position = input.find("domain:"); // hladame domain preto od tadial chceme vystup
+          //cout<<input;
+          std::string finaloutput = input.substr(position);
+          cout<<finaloutput<<"\n";
+          // REGEXY KTORE NIESU POTREBNE
+          /*  PrintRegexMatch(input,addressReg);
+          PrintRegexMatch(input,admin_cReg);
+          PrintRegexMatch(input,domianReg);
+          PrintRegexMatch(input,registrantReg);
+          PrintRegexMatch(input,registrarReg);
+          PrintRegexMatch(input,orgReg);
+          PrintRegexMatch(input,nameReg);
+          PrintRegexMatch(input,contactReg);
+          PrintRegexMatch(input,nserverReg);*/
+
+        }
+        else{
+          cout<<"NO entries found "<<input_for_nic<<"\n";
+          return EXIT_FAILURE;
+        }
       }
       else // ak sa na vstupe nenachadza www
       {
@@ -489,21 +523,29 @@ cout << "======== DNS =========== "<<"\n";
         }
         input = buf;
 
-        cout << "====== WHOIS: "<< whois_domena <<"  ===========\n";
+        cout << "====== WHOIS: "<< old_whois <<"  ===========\n";
       //  cout << input;
-        std::size_t position = input.find("domain:");
-        std::string finaloutput = input.substr(position);
-        cout<<finaloutput<<"\n";
-      /*  PrintRegexMatch(input,addressReg);
-        PrintRegexMatch(input,admin_cReg);
-        PrintRegexMatch(input,domianReg);
-        PrintRegexMatch(input,registrantReg);
-        PrintRegexMatch(input,registrarReg);
-        PrintRegexMatch(input,orgReg);
-        PrintRegexMatch(input,nameReg);
-        PrintRegexMatch(input,contactReg);
-        PrintRegexMatch(input,nserverReg);*/
+        if(std::regex_search(input,m,std::regex("(domain:)")) == true){
+          std::size_t position = input.find("domain:"); // hladame domain preto od tadial chceme vystup
+          //cout<<input;
+          std::string finaloutput = input.substr(position);
+          cout<<finaloutput<<"\n";
+          // REGEXY KTORE NIESU POTREBNE
+          /*  PrintRegexMatch(input,addressReg);
+          PrintRegexMatch(input,admin_cReg);
+          PrintRegexMatch(input,domianReg);
+          PrintRegexMatch(input,registrantReg);
+          PrintRegexMatch(input,registrarReg);
+          PrintRegexMatch(input,orgReg);
+          PrintRegexMatch(input,nameReg);
+          PrintRegexMatch(input,contactReg);
+          PrintRegexMatch(input,nserverReg);*/
 
+        }
+        else{
+          cout<<"NO entries found "<<input_for_nic<<"\n";
+          return EXIT_FAILURE;
+        }
       }
     }
     else // ak to neni whois ale nejaky iny whois server
@@ -523,7 +565,7 @@ cout << "======== DNS =========== "<<"\n";
 
       input = buf;
 
-      cout << "====== WHOIS: "<<whois_domena <<"===========\n";
+      cout << "====== WHOIS: "<<old_whois <<"===========\n";
 
       PrintRegexMatch(input,inetnumReg);
       PrintRegexMatch(input,netnameReg);
