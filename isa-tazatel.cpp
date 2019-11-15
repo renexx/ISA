@@ -16,7 +16,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <unistd.h> // getopt
-#include<err.h>
+#include <err.h>
 #include <string>
 #include <iostream>
 #include <regex>
@@ -172,8 +172,44 @@ std::string  resolvePtr(const char* dname)
     cout <<"PTR " << nRet<<"\n";
   }
   return nRet;
+}
+std::string ptripv6(const char* str)
+{
+    struct in6_addr addr;
+    inet_pton(AF_INET6,str,&addr);
+    char str2[48];
+    char buf[N];
+    std::string nRet;
+    sprintf(str2,"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+                  (int)addr.s6_addr[0], (int)addr.s6_addr[1],
+                  (int)addr.s6_addr[2], (int)addr.s6_addr[3],
+                  (int)addr.s6_addr[4], (int)addr.s6_addr[5],
+                  (int)addr.s6_addr[6], (int)addr.s6_addr[7],
+                  (int)addr.s6_addr[8], (int)addr.s6_addr[9],
+                  (int)addr.s6_addr[10], (int)addr.s6_addr[11],
+                  (int)addr.s6_addr[12], (int)addr.s6_addr[13],
+                  (int)addr.s6_addr[14], (int)addr.s6_addr[15]);
+    std::string reverse = str2;
+    int len = reverse.length();
+    int n = len - 1;
+    for(int i = 0; i < (len/2);i++){
+      char temp = reverse[i];
+      reverse[i] = reverse[n];
+      reverse[n] = temp;
+      n = n - 1;
+    }
 
+    std::stringstream ss;
+    for(int i = 0; i < reverse.size(); i ++){
+      ss << reverse[i] << ".";
+    }
 
+    std::string vysledok = ss.str();
+    vysledok = vysledok + "ip6.arpa";
+    const char* ipv6 = vysledok.c_str();
+    nRet = runDnsQuery(ipv6,ns_t_ptr);
+  //  cout<< nRet<<"\n";
+    return nRet;
 }
 
 static bool soa_parser(std::string soa_query)
@@ -349,6 +385,7 @@ cout << "======== DNS =========== "<<"\n";
     const char *domain = str3.c_str(); //mobilmania.cz
   //  cout<<"Ja som domena "<<domain<<"\n";
     std::string ptr_query =resolvePtr(hostname); // volanie funkci na rezoluciu PTR záznamu
+    std::string ptripv6a = ptripv6(hostname);
     std::string aaaa = runDnsQuery(domenove_meno,ns_t_aaaa); //AAAA zaznam
     std::string a = runDnsQuery(domenove_meno,ns_t_a); // A zaznam
     std::string mx_query = runDnsQuery(domenove_meno,ns_t_mx); //MX zaznam
@@ -362,27 +399,6 @@ cout << "======== DNS =========== "<<"\n";
       soa_parser(soa_query_authority);
 
     }
-
-  /*    u_char nsbuf[N];
-      char dispbuf[N];
-      ns_msg msg;
-      ns_rr rr;
-      int x, l;
-      int msg_size;
-
-
-      l = res_search(domenove_meno,ns_c_in,ns_t_soa,nsbuf,N); //c_in internet N je velkost odpovedoveho bufra nsbuf
-
-      ns_initparse(nsbuf,l,&msg);// perror("NS_INITPARSE ");
-
-      for(x = 0; x < ns_msg_count(msg,ns_s_ns); x++)
-      {
-          ns_parserr(&msg, ns_s_ns, x, &rr);
-          ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
-
-      }*/
-
-
 
    /* NASLEDNE prevod domenoveho mena na IP adresu pomocou getaddrinfo a nasledne vytovrenie spojenia pomocou socket */
      memset(&whois_server,0,sizeof(whois_server));  //nastavy dany pocet bytov na hodnotu uvedenu v parametri c cize na 0 a vynulujeme
@@ -502,7 +518,7 @@ cout << "======== DNS =========== "<<"\n";
 
         }
         else{
-          cout<<"NO entries found "<<input_for_nic<<"\n";
+          cout<<"NO entries found for "<<"\n";
           return EXIT_FAILURE;
         }
       }
@@ -543,7 +559,7 @@ cout << "======== DNS =========== "<<"\n";
 
         }
         else{
-          cout<<"NO entries found "<<input_for_nic<<"\n";
+          cout<<"NO entries found "<<"\n";
           return EXIT_FAILURE;
         }
       }
