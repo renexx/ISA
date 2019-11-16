@@ -210,7 +210,7 @@ std::string  resolvePtr(const char* dname)
     nRet = runDnsQuery(buf,ns_t_ptr); // volanie funkci runDnsQuery kde parameter type je ns_t_ptr
   //  cout <<"PTR " << nRet<<"\n";
     std::smatch m;
-    if(std::regex_search(nRet,m,std::regex("(PTR)(\\s*)(.*)")) == true)
+    if(std::regex_search(nRet,m,std::regex("(PTR)(\\s*)(.*).")) == true)
     {
       std::string ptr = m[1];
       std::string space = m[2];
@@ -259,14 +259,16 @@ std::string ptripv6(const char* str)
     const char* ipv6 = vysledok.c_str();
     nRet = runDnsQuery(ipv6,ns_t_ptr);
     std::smatch m;
-    if(std::regex_search(nRet,m,std::regex("(PTR)(\\s*)(.*)")) == true){
+    std::string ptr_result;
+    std::string domain_name_in_ptr;
+    if(std::regex_search(nRet,m,std::regex("(PTR)(\\s*)(.*).")) == true){
       std::string ptr = m[1];
       std::string medzera = m[2];
-      std::string domain_name_in_ptr = m[3];
+      domain_name_in_ptr = m[3];
 
       std::stringstream join;
       join<< ptr<< medzera<<"\t" << domain_name_in_ptr;
-      std::string ptr_result = join.str();
+      ptr_result = join.str();
       cout<<ptr_result<<"\n";
 
       std::string aaaa = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_aaaa); //AAAA zaznam
@@ -296,8 +298,54 @@ std::string ptripv6(const char* str)
     //else
       //cout<<"PTR not found "<<"\n";
     //cout<<"JA SOM: "<< nRet<<"\n";
-    return nRet;
+    return domain_name_in_ptr;
 }
+
+int whois_nic_cz(std::string input_for_niccz, int client_socket, std::string result, char *old_whois)
+{
+  std::smatch m;
+  int bytenasend;
+  char buf[BUFFER];
+  if(std::regex_search(input_for_niccz,m,std::regex("(www.)")) == true) // tu hladame pomocou regexu ci sa vo vstupe nachadza www. alebo nie ak ano tak musime orezat aby bolo bez wwww
+  {
+    std::string orezane = result;
+
+    std::size_t pos = input_for_niccz.find("."); // najdeme bodku
+    std::string niccz_without_www = input_for_niccz.substr(pos + 1); // a zobereme to co je za bodkov cize o poziciu dalej
+    const char *input_for_nic = niccz_without_www.c_str(); //mobilmania.cz
+    strcpy(buf,input_for_nic); // do buffru nakopirujeme domenu uz bez www
+    strcat(buf,"\r\n"); // whois podla rfc potrebuje \r\n
+
+    bytenasend = send(client_socket, buf, strlen(buf),0); // poslanie poziadavky na server whois.nic.cz
+    if (bytenasend == -1)
+    {
+        perror("ERROR: \n");
+    }
+
+    if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1)
+    {  // MSG_WAITALL pri čitani sa čaká na všetky data preto som pouzil recv a nie write
+        err(1,"initial read() failed");
+    }
+    std::string input = buf;
+
+    cout << "====== WHOIS: "<< old_whois <<"  ===========\n";
+
+    if(std::regex_search(input,m,std::regex("(domain:)")) == true)
+    {
+      std::size_t position = input.find("domain:"); // hladame domain preto od tadial chceme vystup
+      std::string finaloutput = input.substr(position);
+      cout<<finaloutput<<"\n";
+
+    }
+    else
+    {
+      cout<<"NO entries found for "<<"\n";
+      return EXIT_FAILURE;
+    }
+  }
+
+}
+
 
 int main(int argc, char **argv) {
     int option;
@@ -424,18 +472,13 @@ cout << "======== DNS =========== "<<"\n";
       }
 
     std::string result = getHostname(hostname); // prevedieme IP adresu na domenove meno pretože funkcie v runDnsQuery pracuju len s domenovym menom
- // orezanie www neni to potrebne nikde to nieje vyuzite moze sa to vymazat
-  //  cout<<"JA Som result " <<result<<"\n";
     std::string orezane = result;
-  //  cout<< "JA budem orezane "<<orezane<<"\n";
+
     std::size_t pos = orezane.find(".");
     std:string str3 = orezane.substr(pos + 1);
-  //  cout<<"ja som "<<str3<<"\n";
 
     const char *domenove_meno = result.c_str(); //www.mobilmania.cz
-  //  cout<<"Ja som domenove meno "<<domenove_meno<<"\n";
     const char *domain = str3.c_str(); //mobilmania.cz
-  //  cout<<"Ja som domena "<<domain<<"\n";
     std::string ptr_query =resolvePtr(hostname); // volanie funkci na rezoluciu PTR záznamu
     std::string ptripv6a = ptripv6(hostname);
     std::string aaaa = runDnsQuery(domenove_meno,ns_t_aaaa); //AAAA zaznam
@@ -481,23 +524,20 @@ cout << "======== DNS =========== "<<"\n";
          fprintf(stderr, "%s: %s\n", whois, gai_strerror(result_for_whois));
          exit(EXIT_FAILURE);
      }
-     //cout<<"JA som po getaddrinfo " <<whois<<"\n";
-     //cout<<result_for_whois<<"\n";
-     //cout<<whois_server<<"\n";
-     //cout<<whois_infoptr<<"\n";
+
      char old_whois[100];
      strcpy(old_whois,whois);
      for(whois_ptr = whois_infoptr; whois_ptr != NULL; whois_ptr = whois_ptr->ai_next)
      {
          getnameinfo(whois_ptr->ai_addr,whois_ptr->ai_addrlen,whois,sizeof(whois),NULL,0,NI_NUMERICHOST);
          /* Vytvoreni soketu a inicializovanie soketu*/
-         //cout<<"JA SOM tu: " <<whois<<"\n";
+
          if ((client_socket = socket(whois_infoptr->ai_family, whois_infoptr->ai_socktype, whois_infoptr->ai_protocol)) <= 0) /*AF_UNSPEC = IPv4, SOCK_STREAM = TCP, 0 je protokol 0 implicitne vybere podla SOCK_STREAM, inak IPPROTO_TCP*/
          {
              perror("ERROR 224: socket");
              exit(EXIT_FAILURE);
          }
-         //cout<<"JA SOM neviem: " <<whois<<"\n";
+
          /*Aktivne otvorenie na strane klienta, druhy parameter funkcie obsahuje ip adresu a port servera*/
          if (connect(client_socket, whois_infoptr->ai_addr, whois_infoptr->ai_addrlen) != 0)
          {
@@ -505,118 +545,61 @@ cout << "======== DNS =========== "<<"\n";
              exit(EXIT_FAILURE);
          }
      }
-    // cout<<old_whois;
+
     std::string ip_hostname = hostnameToIp(hostname); // funkcia ktora prevedie domenove meno na IP
     const char *ip_adress = ip_hostname.c_str();
-  //  cout<<"JA SOM IP ADDRES PREVEDENA ale hostnameu cize -q : " <<ip_adress<<"\n";
-
-  //  std::string whois_domena = getHostname(whois); // funkcia, ktora ziska domenove meno z IP
-  //  cout<<"JA MAM DOMENOVE MENO Z IP ale whois " <<old_whois<<"\n";
-//    const char* domena_for_whois = whois_domena.c_str();
-    // spracovanie whois.nic.cz ten bere len domeny
-
 
     if(strcmp(old_whois,"whois.nic.cz") == 0) // porovnava ci sa parameter -w nezhoduje s whois.nic.cz pretoze whois.nic.cz bere domeny preto tu musi byt vyjnimka
     {
-      //cout<<"AK SA STRCMP ROVNA\n";
       std::string input_for_niccz = getHostname(hostname);
-      //const char *input_domain_for_niccz = input_for_niccz.c_str();
-    //  cout<<"JA SOM STRING old_whois "<<old_whois<<"\n";
-    //  cout<<"JA SOM STRING result "<<input_for_niccz<<"\n";
       std::smatch m;
-      const char *input_domain_for_niccz = input_for_niccz.c_str();
-      if(std::regex_search(input_for_niccz,m,std::regex("(www.)")) == true) // tu hladame pomocou regexu ci sa vo vstupe nachadza www. alebo nie ak ano tak musime orezat aby bolo bez wwww
+      char buf[16];
+      if(inet_pton(AF_INET6,hostname,buf)) // ak je to ipv6
       {
-        //cout<<"TU SOM\n";
-        std::string orezane = result;
-        //cout<<"JA SOM STRING OREZANE "<<orezane<<"\n";
-
-        std::size_t pos = input_for_niccz.find("."); // najdeme bodku
-        std::string niccz_without_www = input_for_niccz.substr(pos + 1); // a zobereme to co je za bodkov cize o poziciu dalej
-        const char *input_for_nic = niccz_without_www.c_str(); //mobilmania.cz
-        strcpy(buf,input_for_nic); // do buffru nakopirujeme domenu uz bez www
-        strcat(buf,"\r\n"); // whois podla rfc potrebuje \r\n
-        //cout<<"JA SOM bez www "<<input_for_nic<<"\n";
-      //  cout<<"JA SOM buf "<<buf<<"\n";
-
-        bytenasend = send(client_socket, buf, strlen(buf),0); // poslanie poziadavky na server whois.nic.cz
-        if (bytenasend == -1)
-        {
-            perror("ERROR: \n");
-        }
-
-        if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1){  // MSG_WAITALL pri čitani sa čaká na všetky data preto som pouzil recv a nie write
-            err(1,"initial read() failed");
-        }
-        input = buf;
-      //  cout<<"ja som input "<<input<<"\n";
-        cout << "====== WHOIS: "<< old_whois <<"  ===========\n";
-        //cout << input;
-        if(std::regex_search(input,m,std::regex("(domain:)")) == true){
-          std::size_t position = input.find("domain:"); // hladame domain preto od tadial chceme vystup
-          //cout<<input;
-          std::string finaloutput = input.substr(position);
-          cout<<finaloutput<<"\n";
-          // REGEXY KTORE NIESU POTREBNE
-          /*  PrintRegexMatch(input,addressReg);
-          PrintRegexMatch(input,admin_cReg);
-          PrintRegexMatch(input,domianReg);
-          PrintRegexMatch(input,registrantReg);
-          PrintRegexMatch(input,registrarReg);
-          PrintRegexMatch(input,orgReg);
-          PrintRegexMatch(input,nameReg);
-          PrintRegexMatch(input,contactReg);
-          PrintRegexMatch(input,nserverReg);*/
-
-        }
-        else{
-          cout<<"NO entries found for "<<"\n";
-          return EXIT_FAILURE;
-        }
+        std::string input_for_niccz = ptripv6a;
+        whois_nic_cz(input_for_niccz,client_socket,result,old_whois);
       }
-      else // ak sa na vstupe nenachadza www
+      else
       {
-
-        strcpy(buf,input_domain_for_niccz); // domenu nakopirujeme do buffra
-        strcat(buf,"\r\n");
-
-        bytenasend = send(client_socket, buf, strlen(buf),0);
-        if (bytenasend == -1)
+        const char *input_domain_for_niccz = input_for_niccz.c_str();
+        whois_nic_cz(input_for_niccz,client_socket,result,old_whois);
+        if(std::regex_search(input_for_niccz,m,std::regex("(www.)")) != true)// ak sa na vstupe nenachadza www
         {
+          strcpy(buf,input_domain_for_niccz); // domenu nakopirujeme do buffra
+          strcat(buf,"\r\n");
+
+          bytenasend = send(client_socket, buf, strlen(buf),0);
+          if (bytenasend == -1)
+          {
             perror("ERROR in sendto 270\n");
-        }
+          }
 
-        if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1){  // MSG_WAITALL pri čitani sa čaká na všetky data
+          if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1)
+          {  // MSG_WAITALL pri čitani sa čaká na všetky data
             err(1,"initial read() failed");
-        }
-        input = buf;
+          }
+          input = buf;
 
-        cout << "====== WHOIS: "<< old_whois <<"  ===========\n";
-      //  cout << input;
-        if(std::regex_search(input,m,std::regex("(domain:)")) == true){
-          std::size_t position = input.find("domain:"); // hladame domain preto od tadial chceme vystup
-          //cout<<input;
-          std::string finaloutput = input.substr(position);
-          cout<<finaloutput<<"\n";
-          // REGEXY KTORE NIESU POTREBNE
-          /*  PrintRegexMatch(input,addressReg);
-          PrintRegexMatch(input,admin_cReg);
-          PrintRegexMatch(input,domianReg);
-          PrintRegexMatch(input,registrantReg);
-          PrintRegexMatch(input,registrarReg);
-          PrintRegexMatch(input,orgReg);
-          PrintRegexMatch(input,nameReg);
-          PrintRegexMatch(input,contactReg);
-          PrintRegexMatch(input,nserverReg);*/
-
-        }
-        else{
-          cout<<"NO entries found "<<"\n";
-          return EXIT_FAILURE;
+          cout << "====== WHOIS: "<< old_whois <<"  ===========\n";
+          //  cout << input;
+          if(std::regex_search(input,m,std::regex("(domain:)")) == true)
+          {
+            std::size_t position = input.find("domain:"); // hladame domain preto od tadial chceme vystup
+            std::string finaloutput = input.substr(position);
+            cout<<finaloutput<<"\n";
+          }
+          else
+          {
+            cout<<"NO entries found "<<"\n";
+            return EXIT_FAILURE;
+          }
         }
       }
+
     }
-    else // ak to neni whois ale nejaky iny whois server
+
+
+    else // ak to neni whois.nic.cz ale nejaky iny whois server
     {
       strcpy(buf,ip_adress); // ip adresu nakopirujeme do buffra
       strcat(buf,"\r\n");//<CR><LF>
@@ -627,7 +610,8 @@ cout << "======== DNS =========== "<<"\n";
         perror("ERROR: \n");
       }
 
-      if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1){  // MSG_WAITALL pri čitani sa čaká na všetky data
+      if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1)
+      {  // MSG_WAITALL pri čitani sa čaká na všetky data
         err(1,"initial read() failed");
       }
 
