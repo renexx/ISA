@@ -22,6 +22,7 @@
 #include <regex>
 #include <arpa/nameser.h>
 #include <resolv.h>
+#include <algorithm>
 
 using namespace std;    // Or using std::string;
 
@@ -153,65 +154,6 @@ std::string runDnsQuery(const char *dname, int nType)
     vypis += dispbuf; // premena char na string pretoze chceme vratit vypis a v maine ho spracovavat kvoli zaznamu SOA, ktorý sa musi samostatne sparsovat
     return vypis;
 }
-
-/*Táto funkcia je z knihy Pána Ing. Petr Matoušek, Ph.D., M.A. kapitola 3. Systém DNS strana 128 funkcia resolve */
-std::string  resolvePtr(const char* dname)
-{
-  in_addr_t addr4;
-  register int i;
-  int ipAddr[4] = {0,0,0,0};
-  char buf[N]; // buffer o velkosti N pričom N má velkost 4096
-  std::string nRet;
-  if((addr4 = inet_network(dname)) != -1){ // funkcia inet_network prevadza retazec v notaci IPv4 čisiel a bodiek na čislo v poradi bajtov (host byte order) ak je vstup neplatný vrati sa -1
-    for(i = 0; addr4; ){
-      ipAddr[i++] = addr4 & 0xFF;
-      addr4 >>= 8;
-    }
-    sprintf(buf,"%u.%u.%u.%u.in-addr.arpa",ipAddr[i % 4], ipAddr[(i+1) % 4], ipAddr[(i+2) % 4], ipAddr[(i+3) % 4]);
-    nRet = runDnsQuery(buf,ns_t_ptr); // volanie funkci runDnsQuery kde parameter type je ns_t_ptr
-    cout <<"PTR " << nRet<<"\n";
-  }
-  return nRet;
-}
-std::string ptripv6(const char* str)
-{
-    struct in6_addr addr;
-    inet_pton(AF_INET6,str,&addr);
-    char str2[48];
-    char buf[N];
-    std::string nRet;
-    sprintf(str2,"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-                  (int)addr.s6_addr[0], (int)addr.s6_addr[1],
-                  (int)addr.s6_addr[2], (int)addr.s6_addr[3],
-                  (int)addr.s6_addr[4], (int)addr.s6_addr[5],
-                  (int)addr.s6_addr[6], (int)addr.s6_addr[7],
-                  (int)addr.s6_addr[8], (int)addr.s6_addr[9],
-                  (int)addr.s6_addr[10], (int)addr.s6_addr[11],
-                  (int)addr.s6_addr[12], (int)addr.s6_addr[13],
-                  (int)addr.s6_addr[14], (int)addr.s6_addr[15]);
-    std::string reverse = str2;
-    int len = reverse.length();
-    int n = len - 1;
-    for(int i = 0; i < (len/2);i++){
-      char temp = reverse[i];
-      reverse[i] = reverse[n];
-      reverse[n] = temp;
-      n = n - 1;
-    }
-
-    std::stringstream ss;
-    for(int i = 0; i < reverse.size(); i ++){
-      ss << reverse[i] << ".";
-    }
-
-    std::string vysledok = ss.str();
-    vysledok = vysledok + "ip6.arpa";
-    const char* ipv6 = vysledok.c_str();
-    nRet = runDnsQuery(ipv6,ns_t_ptr);
-  //  cout<< nRet<<"\n";
-    return nRet;
-}
-
 static bool soa_parser(std::string soa_query)
 {
   // parsovanie SOA zaznamu, kvoli ziskaniu admin emailu
@@ -251,6 +193,111 @@ static bool soa_parser(std::string soa_query)
       return false;
 }
 
+/*Táto funkcia je z knihy Pána Ing. Petr Matoušek, Ph.D., M.A. kapitola 3. Systém DNS strana 128 funkcia resolve */
+std::string  resolvePtr(const char* dname)
+{
+  in_addr_t addr4;
+  register int i;
+  int ipAddr[4] = {0,0,0,0};
+  char buf[N]; // buffer o velkosti N pričom N má velkost 4096
+  std::string nRet;
+  if((addr4 = inet_network(dname)) != -1){ // funkcia inet_network prevadza retazec v notaci IPv4 čisiel a bodiek na čislo v poradi bajtov (host byte order) ak je vstup neplatný vrati sa -1
+    for(i = 0; addr4; ){
+      ipAddr[i++] = addr4 & 0xFF;
+      addr4 >>= 8;
+    }
+    sprintf(buf,"%u.%u.%u.%u.in-addr.arpa",ipAddr[i % 4], ipAddr[(i+1) % 4], ipAddr[(i+2) % 4], ipAddr[(i+3) % 4]);
+    nRet = runDnsQuery(buf,ns_t_ptr); // volanie funkci runDnsQuery kde parameter type je ns_t_ptr
+  //  cout <<"PTR " << nRet<<"\n";
+    std::smatch m;
+    if(std::regex_search(nRet,m,std::regex("(PTR)(\\s*)(.*)")) == true)
+    {
+      std::string ptr = m[1];
+      std::string space = m[2];
+      std::string domain_name_in_ptr = m[3];
+      std::stringstream ss;
+      ss<<ptr<<space<<"\t"<<domain_name_in_ptr;
+      std::string print_ptripv4 = ss.str();
+      cout<<print_ptripv4<<"\n";
+    }
+  }
+  return nRet;
+}
+std::string ptripv6(const char* str)
+{
+    struct in6_addr addr;
+    inet_pton(AF_INET6,str,&addr);
+    char str2[48];
+    char buf[N];
+    std::string nRet;
+    sprintf(str2,"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+                  (int)addr.s6_addr[0], (int)addr.s6_addr[1],
+                  (int)addr.s6_addr[2], (int)addr.s6_addr[3],
+                  (int)addr.s6_addr[4], (int)addr.s6_addr[5],
+                  (int)addr.s6_addr[6], (int)addr.s6_addr[7],
+                  (int)addr.s6_addr[8], (int)addr.s6_addr[9],
+                  (int)addr.s6_addr[10], (int)addr.s6_addr[11],
+                  (int)addr.s6_addr[12], (int)addr.s6_addr[13],
+                  (int)addr.s6_addr[14], (int)addr.s6_addr[15]);
+    std::string reverse = str2;
+    int len = reverse.length();
+    int n = len - 1;
+    for(int i = 0; i < (len/2);i++){
+      char temp = reverse[i];
+      reverse[i] = reverse[n];
+      reverse[n] = temp;
+      n = n - 1;
+    }
+
+    std::stringstream ss;
+    for(int i = 0; i < reverse.size(); i ++){
+      ss << reverse[i] << ".";
+    }
+
+    std::string vysledok = ss.str();
+    vysledok = vysledok + "ip6.arpa";
+    const char* ipv6 = vysledok.c_str();
+    nRet = runDnsQuery(ipv6,ns_t_ptr);
+    std::smatch m;
+    if(std::regex_search(nRet,m,std::regex("(PTR)(\\s*)(.*)")) == true){
+      std::string ptr = m[1];
+      std::string medzera = m[2];
+      std::string domain_name_in_ptr = m[3];
+
+      std::stringstream join;
+      join<< ptr<< medzera<<"\t" << domain_name_in_ptr;
+      std::string ptr_result = join.str();
+      cout<<ptr_result<<"\n";
+
+      std::string aaaa = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_aaaa); //AAAA zaznam
+      std::string a = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_a); // A zaznam
+    //  cout<<a;
+      std::string mx_query = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_mx); //MX zaznam
+      std::string ns_query = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_ns); // NS zaznam
+      std::string soa_query = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_soa); // SOA zaznam
+      std::string cname = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_cname); // CNAME zaznam
+      if(soa_parser(soa_query) == false)
+      {
+        //std::string orezane = result;
+      //  cout<< "JA budem orezane "<<orezane<<"\n";
+        std::size_t pos = domain_name_in_ptr.find(".");
+        std:string str3 = domain_name_in_ptr.substr(pos + 1);
+      //  cout<<"ja som "<<str3<<"\n";
+
+      //  cout<<"Ja som domenove meno "<<domenove_meno<<"\n";
+
+        std::string soa_query_authority = runDnsQuery(str3.c_str(),ns_t_soa);
+        soa_parser(soa_query_authority);
+
+      }
+      else
+        cout<<"SOA not found "<<"\n";
+    }
+    //else
+      //cout<<"PTR not found "<<"\n";
+    //cout<<"JA SOM: "<< nRet<<"\n";
+    return nRet;
+}
 
 int main(int argc, char **argv) {
     int option;
@@ -363,6 +410,11 @@ cout << "======== DNS =========== "<<"\n";
             }
           (void)memcpy((void*)&_res.nsaddr_list[0].sin_addr,(void*)hostent_dns->h_addr_list[0],(size_t)hostent_dns->h_length); // nakopirovanie ip do strukturu res
           _res.nscount = 1; // nastavenie res_nscount na 1 z dôvodu aby sa brala ip ako prvá
+        }
+        else if(inet_pton(AF_INET6,dns,buf))
+        {
+          fprintf(stderr, "IPV6 address is not supported %s\n",dns);
+          exit(EXIT_FAILURE);
         }
         else
         {
