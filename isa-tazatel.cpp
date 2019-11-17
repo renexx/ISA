@@ -226,6 +226,7 @@ std::string  resolvePtr(const char* dname)
 std::string ptripv6(const char* str)
 {
     struct in6_addr addr;
+    std::string domain_name_in_ptr;
     if(inet_pton(AF_INET6,str,&addr))
     {
       char str2[48];
@@ -262,7 +263,6 @@ std::string ptripv6(const char* str)
       nRet = runDnsQuery(ipv6,ns_t_ptr);
       std::smatch m;
       std::string ptr_result;
-      std::string domain_name_in_ptr;
       if(std::regex_search(nRet,m,std::regex("(PTR)(\\s*)(.*).")) == true){
         std::string ptr = m[1];
         std::string medzera = m[2];
@@ -271,7 +271,7 @@ std::string ptripv6(const char* str)
         std::stringstream join;
         join<< ptr<< medzera<<"\t" << domain_name_in_ptr;
         ptr_result = join.str();
-        cout<<ptr_result<<"\n";
+    //    cout<<ptr_result<<"\n";
 
         std::string aaaa = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_aaaa); //AAAA zaznam
         std::string a = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_a); // A zaznam
@@ -301,8 +301,8 @@ std::string ptripv6(const char* str)
       //cout<<"PTR not found "<<"\n";
       //cout<<"JA SOM: "<< nRet<<"\n";
 
-      return domain_name_in_ptr;
     }
+    return domain_name_in_ptr;
 }
 
 int whois_nic_cz(std::string input_for_niccz, int client_socket, std::string result)
