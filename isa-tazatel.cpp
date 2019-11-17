@@ -301,7 +301,7 @@ std::string ptripv6(const char* str)
     return domain_name_in_ptr;
 }
 
-int whois_nic_cz(std::string input_for_niccz, int client_socket, std::string result, char *old_whois)
+int whois_nic_cz(std::string input_for_niccz, int client_socket, std::string result)
 {
   std::smatch m;
   int bytenasend;
@@ -328,7 +328,7 @@ int whois_nic_cz(std::string input_for_niccz, int client_socket, std::string res
     }
     std::string input = buf;
 
-    cout << "====== WHOIS: "<< old_whois <<"  ===========\n";
+    cout << "====== WHOIS ===========\n";
 
     if(std::regex_search(input,m,std::regex("(domain:)")) == true)
     {
@@ -557,12 +557,12 @@ cout << "======== DNS =========== "<<"\n";
       if(inet_pton(AF_INET6,hostname,buf)) // ak je to ipv6
       {
         std::string input_for_niccz = ptripv6a;
-        whois_nic_cz(input_for_niccz,client_socket,result,old_whois);
+        whois_nic_cz(input_for_niccz,client_socket,result);
       }
       else
       {
         const char *input_domain_for_niccz = input_for_niccz.c_str();
-        whois_nic_cz(input_for_niccz,client_socket,result,old_whois);
+        whois_nic_cz(input_for_niccz,client_socket,result);
         if(std::regex_search(input_for_niccz,m,std::regex("(www.)")) != true)// ak sa na vstupe nenachadza www
         {
           strcpy(buf,input_domain_for_niccz); // domenu nakopirujeme do buffra
@@ -580,7 +580,7 @@ cout << "======== DNS =========== "<<"\n";
           }
           input = buf;
 
-          cout << "====== WHOIS: "<< old_whois <<"  ===========\n";
+          cout << "====== WHOIS  ===========\n";
           //  cout << input;
           if(std::regex_search(input,m,std::regex("(domain:)")) == true)
           {
@@ -617,7 +617,7 @@ cout << "======== DNS =========== "<<"\n";
 
       input = buf;
 
-      cout << "====== WHOIS: "<<old_whois <<"===========\n";
+      cout << "====== WHOIS:===========\n";
 
       PrintRegexMatch(input,inetnumReg);
       PrintRegexMatch(input,netnameReg);
