@@ -60,7 +60,7 @@ void PrintRegexMatch(std::string str, std::regex reg)
 /*Funkcia na preklad IP adresy na doménové meno*/
 std::string getHostname(const char *domName)
 {
-    struct sockaddr_in server_address, klient_adress;
+    struct sockaddr_in klient_adress;
     //struct sockaddr_in6 klient_ipv6adress;
   //  memset(&klient_ipv6adress,0,sizeof(klient_ipv6adress));
     memset(&klient_adress, 0, sizeof klient_adress);
@@ -84,6 +84,7 @@ std::string  hostnameToIp(const char *domName)
   struct addrinfo client_adress, *client_infoptr, *client_ptr;
   int result_for_client;
   memset(&client_adress,0,sizeof(client_adress));
+  memset(&client_infoptr,0,sizeof client_infoptr);
   client_adress.ai_family = AF_UNSPEC;
   client_adress.ai_socktype = SOCK_STREAM;
   client_adress.ai_protocol = 0;
@@ -241,7 +242,7 @@ std::string ptripv6(const char* str)
                                             (int)addr.s6_addr[10], (int)addr.s6_addr[11],
                                             (int)addr.s6_addr[12], (int)addr.s6_addr[13],
                                             (int)addr.s6_addr[14], (int)addr.s6_addr[15]);
-      cout<<str2<<"\n";
+    //  cout<<str2<<"\n";
       std::string reverse = str2;
       int len = reverse.length();
       int n = len - 1;
@@ -271,7 +272,7 @@ std::string ptripv6(const char* str)
         std::stringstream join;
         join<< ptr<< medzera<<"\t" << domain_name_in_ptr;
         ptr_result = join.str();
-    //    cout<<ptr_result<<"\n";
+        cout<<ptr_result<<"\n";
 
         std::string aaaa = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_aaaa); //AAAA zaznam
         std::string a = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_a); // A zaznam
@@ -357,15 +358,15 @@ int main(int argc, char **argv) {
     socklen_t len;
     const char *addr;
 
-    struct servent *servent;
+
     struct hostent *hostent_dns;
-    struct sockaddr_in dns_ad;
+
 
     extern char *optarg;
     bool q_flag = false;
     bool w_flag = false;
     bool d_flag = false;
-    char hostname[100], whois[100], dns[100];
+    char hostname[100] = "\0", whois[100] = "\0", dns[100] = "\0";
     char buf[BUFFER];
     int i = 0;
     int msg_size;
@@ -500,6 +501,7 @@ cout << "======== DNS =========== "<<"\n";
 
    /* NASLEDNE prevod domenoveho mena na IP adresu pomocou getaddrinfo a nasledne vytovrenie spojenia pomocou socket */
      memset(&whois_server,0,sizeof(whois_server));  //nastavy dany pocet bytov na hodnotu uvedenu v parametri c cize na 0 a vynulujeme
+  //   memset(&whois_infoptr,0,sizeof(whois_infoptr));
      whois_server.ai_family = AF_UNSPEC; // IPV4
      whois_server.ai_socktype = SOCK_STREAM; // TCP
      whois_server.ai_protocol = 0; // implicitna hodnota 0, ktorá spôsobi priradenie vhodného protokolu či už to TCP alebo UDP
@@ -636,8 +638,8 @@ cout << "======== DNS =========== "<<"\n";
 
     }
     close(client_socket);
-    printf("\n\n* Closing client socket ...\n");
     freeaddrinfo(whois_infoptr);
+    printf("\n\n* Closing client socket ...\n");
 
     return 0;
 
