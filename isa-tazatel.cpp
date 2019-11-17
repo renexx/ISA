@@ -226,79 +226,83 @@ std::string  resolvePtr(const char* dname)
 std::string ptripv6(const char* str)
 {
     struct in6_addr addr;
-    inet_pton(AF_INET6,str,&addr);
-    char str2[48];
-    char buf[N];
-    std::string nRet;
-    sprintf(str2,"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-                  (int)addr.s6_addr[0], (int)addr.s6_addr[1],
-                  (int)addr.s6_addr[2], (int)addr.s6_addr[3],
-                  (int)addr.s6_addr[4], (int)addr.s6_addr[5],
-                  (int)addr.s6_addr[6], (int)addr.s6_addr[7],
-                  (int)addr.s6_addr[8], (int)addr.s6_addr[9],
-                  (int)addr.s6_addr[10], (int)addr.s6_addr[11],
-                  (int)addr.s6_addr[12], (int)addr.s6_addr[13],
-                  (int)addr.s6_addr[14], (int)addr.s6_addr[15]);
-    std::string reverse = str2;
-    int len = reverse.length();
-    int n = len - 1;
-    for(int i = 0; i < (len/2);i++){
-      char temp = reverse[i];
-      reverse[i] = reverse[n];
-      reverse[n] = temp;
-      n = n - 1;
-    }
-
-    std::stringstream ss;
-    for(int i = 0; i < reverse.size(); i ++){
-      ss << reverse[i] << ".";
-    }
-
-    std::string vysledok = ss.str();
-    vysledok = vysledok + "ip6.arpa";
-    const char* ipv6 = vysledok.c_str();
-    nRet = runDnsQuery(ipv6,ns_t_ptr);
-    std::smatch m;
-    std::string ptr_result;
-    std::string domain_name_in_ptr;
-    if(std::regex_search(nRet,m,std::regex("(PTR)(\\s*)(.*).")) == true){
-      std::string ptr = m[1];
-      std::string medzera = m[2];
-      domain_name_in_ptr = m[3];
-
-      std::stringstream join;
-      join<< ptr<< medzera<<"\t" << domain_name_in_ptr;
-      ptr_result = join.str();
-      cout<<ptr_result<<"\n";
-
-      std::string aaaa = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_aaaa); //AAAA zaznam
-      std::string a = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_a); // A zaznam
-    //  cout<<a;
-      std::string mx_query = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_mx); //MX zaznam
-      std::string ns_query = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_ns); // NS zaznam
-      std::string soa_query = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_soa); // SOA zaznam
-      std::string cname = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_cname); // CNAME zaznam
-      if(soa_parser(soa_query) == false)
-      {
-        //std::string orezane = result;
-      //  cout<< "JA budem orezane "<<orezane<<"\n";
-        std::size_t pos = domain_name_in_ptr.find(".");
-        std:string str3 = domain_name_in_ptr.substr(pos + 1);
-      //  cout<<"ja som "<<str3<<"\n";
-
-      //  cout<<"Ja som domenove meno "<<domenove_meno<<"\n";
-
-        std::string soa_query_authority = runDnsQuery(str3.c_str(),ns_t_soa);
-        soa_parser(soa_query_authority);
-
+    if(inet_pton(AF_INET6,str,&addr))
+    {
+      char str2[48];
+      char buf[N];
+      std::string nRet;
+      sprintf(str2,"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+                                            (int)addr.s6_addr[0], (int)addr.s6_addr[1],
+                                            (int)addr.s6_addr[2], (int)addr.s6_addr[3],
+                                            (int)addr.s6_addr[4], (int)addr.s6_addr[5],
+                                            (int)addr.s6_addr[6], (int)addr.s6_addr[7],
+                                            (int)addr.s6_addr[8], (int)addr.s6_addr[9],
+                                            (int)addr.s6_addr[10], (int)addr.s6_addr[11],
+                                            (int)addr.s6_addr[12], (int)addr.s6_addr[13],
+                                            (int)addr.s6_addr[14], (int)addr.s6_addr[15]);
+      cout<<str2<<"\n";
+      std::string reverse = str2;
+      int len = reverse.length();
+      int n = len - 1;
+      for(int i = 0; i < (len/2);i++){
+        char temp = reverse[i];
+        reverse[i] = reverse[n];
+        reverse[n] = temp;
+        n = n - 1;
       }
-      else
+
+      std::stringstream ss;
+      for(int i = 0; i < reverse.size(); i ++){
+        ss << reverse[i] << ".";
+      }
+
+      std::string vysledok = ss.str();
+      vysledok = vysledok + "ip6.arpa";
+      const char* ipv6 = vysledok.c_str();
+      nRet = runDnsQuery(ipv6,ns_t_ptr);
+      std::smatch m;
+      std::string ptr_result;
+      std::string domain_name_in_ptr;
+      if(std::regex_search(nRet,m,std::regex("(PTR)(\\s*)(.*).")) == true){
+        std::string ptr = m[1];
+        std::string medzera = m[2];
+        domain_name_in_ptr = m[3];
+
+        std::stringstream join;
+        join<< ptr<< medzera<<"\t" << domain_name_in_ptr;
+        ptr_result = join.str();
+        cout<<ptr_result<<"\n";
+
+        std::string aaaa = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_aaaa); //AAAA zaznam
+        std::string a = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_a); // A zaznam
+        //  cout<<a;
+        std::string mx_query = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_mx); //MX zaznam
+        std::string ns_query = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_ns); // NS zaznam
+        std::string soa_query = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_soa); // SOA zaznam
+        std::string cname = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_cname); // CNAME zaznam
+        if(soa_parser(soa_query) == false)
+        {
+          //std::string orezane = result;
+          //  cout<< "JA budem orezane "<<orezane<<"\n";
+          std::size_t pos = domain_name_in_ptr.find(".");
+          std:string str3 = domain_name_in_ptr.substr(pos + 1);
+          //  cout<<"ja som "<<str3<<"\n";
+
+          //  cout<<"Ja som domenove meno "<<domenove_meno<<"\n";
+
+          std::string soa_query_authority = runDnsQuery(str3.c_str(),ns_t_soa);
+          soa_parser(soa_query_authority);
+
+        }
+        else
         cout<<"SOA not found "<<"\n";
-    }
-    //else
+      }
+      //else
       //cout<<"PTR not found "<<"\n";
-    //cout<<"JA SOM: "<< nRet<<"\n";
-    return domain_name_in_ptr;
+      //cout<<"JA SOM: "<< nRet<<"\n";
+
+      return domain_name_in_ptr;
+    }
 }
 
 int whois_nic_cz(std::string input_for_niccz, int client_socket, std::string result)
@@ -367,8 +371,7 @@ int main(int argc, char **argv) {
     int msg_size;
     struct addrinfo whois_server, *whois_infoptr, *whois_ptr;
 
-    struct addrinfo dns_adress, *dns_infoptr, *dns_ptr;
-    int result_for_whois,result_for_dns;
+    int result_for_whois;
 
     string input;
     std::regex inetnumReg("(inetnum:.*|netrange:.*|nethandle:.*)",std::regex_constants::icase);
@@ -635,7 +638,7 @@ cout << "======== DNS =========== "<<"\n";
     close(client_socket);
     printf("\n\n* Closing client socket ...\n");
     freeaddrinfo(whois_infoptr);
-    freeaddrinfo(dns_infoptr);
+
     return 0;
 
 
