@@ -20,14 +20,17 @@ Pri DNS nás zaujímaju tieto DNS záznamy: *A, AAAA, MX, CNAME, NS, SOA, PTR*
 ## Návrh riešenia a Implementácia
 ### WHOIS
 Program bol riešený pomocou BSD socketov a teda funkcií ako sú
-``` cpp socket(int family, int type, int protocol)
+``` cpp funkcia socket
+socket(int family, int type, int protocol)
 ```
 pre vytvorenie a inicializáciu schránky (socketu).
 pre aktívne pripojenie na strane klienta
-```cpp int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen)
+```cpp funkcia connect
+ int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen)
 ```
  a pre výmenu dát
- ``` cpp ssize_t recv(int sockfd, void *buf, size_t len, int flags)
+ ``` cpp funckie recv a send
+ssize_t recv(int sockfd, void *buf, size_t len, int flags)
 ssize_t send(int sockfd, const void *msg, size_t len, int flags)
 ```
 Pomocou týchto funkcií je vytvorený klient. Získané údaje z whois servera sú parsované pomocou regulárnych výrazov *reg_search()*
@@ -39,14 +42,16 @@ Pri implementáci DNS resolveru sú využité funkcie  z knižnice *<resolv.h>* 
 *#inlcude<netinet/in.h>*
 *#inlcude<resolv.h>*
 Funkcia pre zasielanie požiadavok  
-```cpp int res search(const char *dname, int class, int type, u char *answer, int len)
+```cpp res_search
+ int res_search(const char *dname, int class, int type, u char *answer, int len)
  ```
 Funkcia na inicializovanie dátovej štruktúry *ns_msg* pre spracovanie odpovedi *init_parse()*
 ### Prepínač -d a teda dotazovanie sa na iný DNS server ako je imiplicitne v počítači
 Je potrebné modifikovať *_res štrukturu*. Na začiatku je potrebné inicializovať celú túto štruktúru a to funkciou *res_init()*. Následne sa IP adresa za -d napriklad -d 8.8.8.8 vloží do *_res.nsaddr_list[0]* a *_res.nscount = 1* týmto sa docieli, že ak bude prepínač -d zadaný tak sa bude dotazovať na zadanú IP adresu DNS servera.
 
 #### Knižnice
-```cpp #include <ctype.h>
+```cpp kniznice
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -65,7 +70,8 @@ Je potrebné modifikovať *_res štrukturu*. Na začiatku je potrebné inicializ
 #include <algorithm>
 ```
 #### funkcie
-```cpp void print_usage();
+```cpp funkcie 
+void print_usage();
 void PrintRegexMatch(std::string str, std::regex reg);
 std::string getHostname(const char *domName);
 std::string hostnameToIp(const char *domName);
