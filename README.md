@@ -76,7 +76,8 @@ std::string ptripv6(const char *str);
 int whois_nic_cz(std::string input_for_niccz, int client_socket, std::string result);
 ```
 #### Makrá
-```cpp #define BUFFER 65535 // velkost buffra, ktorý je použitý pri send a recv
+```cpp makrá
+ #define BUFFER 65535 // velkost buffra, ktorý je použitý pri send a recv
  #define N 4096 // velkost N ktorá je použitá pri DNS query
 ```
 ## Testovanie
