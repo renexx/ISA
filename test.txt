@@ -1,0 +1,1489 @@
+./isa-tazatel -w whois.ripe.net -q www.fit.vutbr.cz
+======== DNS ===========
+AAAA	2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+netname:        VUTBR-TCZ
+descr:          VUTBR6-NET
+country:        CZ
+admin-c:        MS6207-RIPE
+address:        Antoninska 548/1
+address:        60190
+address:        Brno
+address:        CZECH REPUBLIC
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+address:        Brno University of Technology
+address:        Center of Computing and Information Services
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+phone:          +420541145453
+phone:          +420 541 145 441
+phone:          +420 541145630
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q www.fit.vutbr.cz -d 8.8.8.8
+======== DNS ===========
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+netname:        VUTBR-TCZ
+descr:          VUTBR6-NET
+country:        CZ
+admin-c:        MS6207-RIPE
+address:        Antoninska 548/1
+address:        60190
+address:        Brno
+address:        CZECH REPUBLIC
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+address:        Brno University of Technology
+address:        Center of Computing and Information Services
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+phone:          +420541145453
+phone:          +420 541 145 441
+phone:          +420 541145630
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q 147.229.9.23 -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+inetnum:        147.229.0.0 - 147.229.254.255
+netname:        VUTBRNET
+descr:          Brno University of Technology
+descr:          VUTBR-NET1
+country:        CZ
+admin-c:        CA6319-RIPE
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        601 90 Brno
+address:        The Czech Republic
+phone:          +420 541145453
+phone:          +420 723047787
+
+
+* Closing client socket ...
+./isa-tazatel -w 193.0.6.135 -q 147.229.9.23 -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+inetnum:        147.229.0.0 - 147.229.254.255
+netname:        VUTBRNET
+descr:          Brno University of Technology
+descr:          VUTBR-NET1
+country:        CZ
+admin-c:        CA6319-RIPE
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        601 90 Brno
+address:        The Czech Republic
+phone:          +420 541145453
+phone:          +420 723047787
+
+
+* Closing client socket ...
+./isa-tazatel -w 193.0.6.135 -q www.fit.vutbr.cz -d 8.8.8.8
+======== DNS ===========
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+netname:        VUTBR-TCZ
+descr:          VUTBR6-NET
+country:        CZ
+admin-c:        MS6207-RIPE
+address:        Antoninska 548/1
+address:        60190
+address:        Brno
+address:        CZECH REPUBLIC
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+address:        Brno University of Technology
+address:        Center of Computing and Information Services
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+phone:          +420541145453
+phone:          +420 541 145 441
+phone:          +420 541145630
+
+
+* Closing client socket ...
+./isa-tazatel -w 193.0.6.135 -q 2001:67c:1220:809::93e5:917 -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+netname:        VUTBR-TCZ
+descr:          VUTBR6-NET
+country:        CZ
+admin-c:        MS6207-RIPE
+address:        Antoninska 548/1
+address:        60190
+address:        Brno
+address:        CZECH REPUBLIC
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+address:        Brno University of Technology
+address:        Center of Computing and Information Services
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+phone:          +420541145453
+phone:          +420 541 145 441
+phone:          +420 541145630
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q 2001:67c:1220:809::93e5:917 -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA   	guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+netname:        VUTBR-TCZ
+descr:          VUTBR6-NET
+country:        CZ
+admin-c:        MS6207-RIPE
+address:        Antoninska 548/1
+address:        60190
+address:        Brno
+address:        CZECH REPUBLIC
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+address:        Brno University of Technology
+address:        Center of Computing and Information Services
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+phone:          +420541145453
+phone:          +420 541 145 441
+phone:          +420 541145630
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.arin.net -q 2001:67c:1220:809::93e5:917 -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+NetRange:       2001:600:: - 2001:7FF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF
+NetHandle:      NET6-2001-600-1
+NetName:        EU-ZZ-2001-0600
+CIDR:           2001:600::/23
+Organization:   RIPE Network Coordination Centre (RIPE)
+Country:        NL
+Address:        P.O. Box 10096
+OrgTechPhone:  +31 20 535 4444
+OrgAbusePhone:  +31205354444
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.iana.org -q 2001:67c:1220:809::93e5:917 -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.nic.cz -q 2001:67c:1220:809::93e5:917 -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS ===========
+NO entries found
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.nic.cz -q www.fit.vutbr.cz -d 8.8.8.8
+======== DNS ===========
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS ===========
+NO entries found
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.nic.cz -q fit.vutbr.cz -d 8.8.8.8
+======== DNS ===========
+MX	20 eva.fit.vutbr.cz
+MX	10 kazi.fit.vutbr.cz
+NS	guta.fit.vutbr.cz.
+NS	rhino.cis.vutbr.cz.
+NS	gate.feec.vutbr.cz.
+NS	kazi.fit.vutbr.cz.
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+fit.vutbr.cz: No address associated with hostname
+./isa-tazatel -w whois.nic.cz -q 147.229.9.23 -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS ===========
+NO entries found
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.arin.net -q 147.229.9.23 -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+NetRange:       147.228.0.0 - 147.237.255.255
+NetHandle:      NET-147-228-0-0-1
+NetName:        RIPE-ERX-147-228-0-0
+CIDR:           147.228.0.0/14, 147.232.0.0/14, 147.236.0.0/15
+Organization:   RIPE Network Coordination Centre (RIPE)
+Country:        NL
+Address:        P.O. Box 10096
+OrgTechPhone:  +31 20 535 4444
+OrgAbusePhone:  +31205354444
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.iana.org -q 147.229.9.23 -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+inetnum:      147.0.0.0 - 147.255.255.255
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q 147.229.9.23 -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+inetnum:        147.229.0.0 - 147.229.254.255
+netname:        VUTBRNET
+descr:          Brno University of Technology
+descr:          VUTBR-NET1
+country:        CZ
+admin-c:        CA6319-RIPE
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        601 90 Brno
+address:        The Czech Republic
+phone:          +420 541145453
+phone:          +420 723047787
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q whois.arin.net -d 8.8.8.8
+======== DNS ===========
+AAAA	2001:500:31::46
+AAAA	2001:500:a9::46
+AAAA	2001:500:13::46
+A	199.71.0.46
+A	199.212.0.46
+A	199.5.26.46
+SOA     ns1.arin.net.
+admin email bind@arin.net.
+
+====== WHOIS:===========
+netname:        IANA-BLK
+descr:          The whole IPv6 address space
+country:        EU # Country is really world wide
+admin-c:        IANA1-RIPE
+admin-c:        IANA1-RIPE
+admin-c:        ACM2-RIPE
+admin-c:        IW112-RIPE
+admin-c:        NP3260-RIPE
+admin-c:        IANA1-RIPE
+admin-c:        BRD-RIPE
+address:        see http://www.iana.org
+address:        RIPE Network Coordination Centre
+address:        P.O. Box 10096
+address:        1001 EB Amsterdam
+address:        the Netherlands
+address:        see http://www.iana.org.
+address:        Stationsplein 11
+address:        1012 AB Amsterdam
+address:        The Netherlands
+phone:          +31 20 535 4444
+phone:          +31 20 535 4444
+
+
+* Closing client socket ...
+./isa-tazatel -w 199.71.0.46 -q 147.229.9.23 -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA   	guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+NetRange:       147.228.0.0 - 147.237.255.255
+NetHandle:      NET-147-228-0-0-1
+NetName:        RIPE-ERX-147-228-0-0
+CIDR:           147.228.0.0/14, 147.236.0.0/15, 147.232.0.0/14
+Organization:   RIPE Network Coordination Centre (RIPE)
+Country:        NL
+Address:        P.O. Box 10096
+OrgTechPhone:  +31 20 535 4444
+OrgAbusePhone:  +31205354444
+
+
+* Closing client socket ...
+./isa-tazatel -w 199.71.0.46 -q www.fekt.vutbr.cz -d 8.8.8.8
+======== DNS ===========
+AAAA  2001:67c:1220:9847::93e5:471c
+A	147.229.71.28
+SOA     gate.feec.vutbr.cz.
+admin email macho@feec.vutbr.cz.
+
+====== WHOIS:===========
+NetRange:       2001:600:: - 2001:7FF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF
+NetHandle:      NET6-2001-600-1
+NetName:        EU-ZZ-2001-0600
+CIDR:           2001:600::/23
+Organization:   RIPE Network Coordination Centre (RIPE)
+Country:        NL
+Address:        P.O. Box 10096
+OrgTechPhone:  +31 20 535 4444
+OrgAbusePhone:  +31205354444
+
+
+* Closing client socket ...
+./isa-tazatel -w 199.71.0.46 -q fit.vutbr.cz -d 8.8.8.8
+======== DNS ===========
+MX	10 kazi.fit.vutbr.cz
+MX	20 eva.fit.vutbr.cz
+NS	rhino.cis.vutbr.cz.
+NS	guta.fit.vutbr.cz.
+NS	gate.feec.vutbr.cz.
+NS	kazi.fit.vutbr.cz.
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+fit.vutbr.cz: No address associated with hostname
+./isa-tazatel -w 199.71.0.46 -q vutbr.cz -d 8.8.8.8
+======== DNS ===========
+A	147.229.2.90
+MX	5 mx.vutbr.cz
+NS	pipit.cis.vutbr.cz.
+NS	rhino.cis.vutbr.cz.
+SOA   	rhino.cis.vutbr.cz.
+admin email hostmaster@vutbr.cz.
+
+====== WHOIS:===========
+NetRange:       147.228.0.0 - 147.237.255.255
+NetHandle:      NET-147-228-0-0-1
+NetName:        RIPE-ERX-147-228-0-0
+CIDR:           147.232.0.0/14, 147.228.0.0/14, 147.236.0.0/15
+Organization:   RIPE Network Coordination Centre (RIPE)
+Country:        NL
+Address:        P.O. Box 10096
+OrgTechPhone:  +31 20 535 4444
+OrgAbusePhone:  +31205354444
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q vutbr.cz -d 8.8.8.8
+======== DNS ===========
+A	147.229.2.90
+MX	5 mx.vutbr.cz
+NS	rhino.cis.vutbr.cz.
+NS	pipit.cis.vutbr.cz.
+SOA   	rhino.cis.vutbr.cz.
+admin email hostmaster@vutbr.cz.
+
+====== WHOIS:===========
+inetnum:        147.229.0.0 - 147.229.254.255
+netname:        VUTBRNET
+descr:          Brno University of Technology
+descr:          VUTBR-NET1
+country:        CZ
+admin-c:        CA6319-RIPE
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        601 90 Brno
+address:        The Czech Republic
+phone:          +420 541145453
+phone:          +420 723047787
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q www.fekt.vutbr.cz -d 8.8.8.8
+======== DNS ===========
+AAAA  2001:67c:1220:9847::93e5:471c
+A	147.229.71.28
+SOA     gate.feec.vutbr.cz.
+admin email macho@feec.vutbr.cz.
+
+====== WHOIS:===========
+netname:        VUTBR-TCZ
+descr:          VUTBR6-NET
+country:        CZ
+admin-c:        MS6207-RIPE
+address:        Antoninska 548/1
+address:        60190
+address:        Brno
+address:        CZECH REPUBLIC
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+address:        Brno University of Technology
+address:        Center of Computing and Information Services
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+phone:          +420541145453
+phone:          +420 541 145 441
+phone:          +420 541145630
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q fekt.vutbr.cz -d 8.8.8.8
+======== DNS ===========
+AAAA  2001:67c:1220:9847::93e5:471c
+A	147.229.71.28
+NS	kos.feec.vutbr.cz.
+NS	gate.feec.vutbr.cz.
+NS	rhino.cis.vutbr.cz.
+SOA     gate.feec.vutbr.cz.
+admin email macho@feec.vutbr.cz.
+
+====== WHOIS:===========
+netname:        VUTBR-TCZ
+descr:          VUTBR6-NET
+country:        CZ
+admin-c:        MS6207-RIPE
+address:        Antoninska 548/1
+address:        60190
+address:        Brno
+address:        CZECH REPUBLIC
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+address:        Brno University of Technology
+address:        Center of Computing and Information Services
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+phone:          +420541145453
+phone:          +420 541 145 441
+phone:          +420 541145630
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q 147.229.71.28 -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fekt.vutbr.cz
+AAAA  2001:67c:1220:9847::93e5:471c
+A	147.229.71.28
+SOA   	gate.feec.vutbr.cz.
+admin email macho@feec.vutbr.cz.
+
+====== WHOIS:===========
+inetnum:        147.229.0.0 - 147.229.254.255
+netname:        VUTBRNET
+descr:          Brno University of Technology
+descr:          VUTBR-NET1
+country:        CZ
+admin-c:        CA6319-RIPE
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        601 90 Brno
+address:        The Czech Republic
+phone:          +420 541145453
+phone:          +420 723047787
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q 2001:67c:1220:9847::93e5:471c -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fekt.vutbr.cz
+AAAA  2001:67c:1220:9847::93e5:471c
+A	147.229.71.28
+SOA     gate.feec.vutbr.cz.
+admin email macho@feec.vutbr.cz.
+
+====== WHOIS:===========
+netname:        VUTBR-TCZ
+descr:          VUTBR6-NET
+country:        CZ
+admin-c:        MS6207-RIPE
+address:        Antoninska 548/1
+address:        60190
+address:        Brno
+address:        CZECH REPUBLIC
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+address:        Brno University of Technology
+address:        Center of Computing and Information Services
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+phone:          +420541145453
+phone:          +420 541 145 441
+phone:          +420 541145630
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.arin.net -q 2001:67c:1220:9847::93e5:471c -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fekt.vutbr.cz
+AAAA  2001:67c:1220:9847::93e5:471c
+A	147.229.71.28
+SOA     gate.feec.vutbr.cz.
+admin email macho@feec.vutbr.cz.
+
+====== WHOIS:===========
+NetRange:       2001:600:: - 2001:7FF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF
+NetHandle:      NET6-2001-600-1
+NetName:        EU-ZZ-2001-0600
+CIDR:           2001:600::/23
+Organization:   RIPE Network Coordination Centre (RIPE)
+Country:        NL
+Address:        P.O. Box 10096
+OrgTechPhone:  +31 20 535 4444
+OrgAbusePhone:  +31205354444
+
+
+* Closing client socket ...
+./isa-tazatel -w 193.0.6.135 -q 2001:67c:1220:9847::93e5:471c -d 8.8.8.8
+======== DNS ===========
+PTR  	www.fekt.vutbr.cz
+AAAA  2001:67c:1220:9847::93e5:471c
+A	147.229.71.28
+SOA     gate.feec.vutbr.cz.
+admin email macho@feec.vutbr.cz.
+
+====== WHOIS:===========
+netname:        VUTBR-TCZ
+descr:          VUTBR6-NET
+country:        CZ
+admin-c:        MS6207-RIPE
+address:        Antoninska 548/1
+address:        60190
+address:        Brno
+address:        CZECH REPUBLIC
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+address:        Brno University of Technology
+address:        Center of Computing and Information Services
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+phone:          +420541145453
+phone:          +420 541 145 441
+phone:          +420 541145630
+
+
+* Closing client socket ...
+./isa-tazatel -w 193.0.6.135 -q www.mobilmania.cz -d 8.8.8.8
+======== DNS ===========
+CNAME	mobilmania.cz.
+CNAME	mobilmania.cz.
+A	85.207.58.46
+CNAME	mobilmania.cz.
+CNAME	mobilmania.cz.
+NS	ns2.ignum.cz.
+NS	ns1.ignum.com.
+CNAME	mobilmania.cz.
+CNAME	mobilmania.cz.
+SOA   	ns1.ignum.com.
+admin email hostmaster@ignum.cz.
+
+====== WHOIS:===========
+inetnum:        85.207.58.32 - 85.207.58.63
+netname:        CNC-CZ
+descr:          BlueTone-CRa-CZ
+descr:          Fourth address block
+country:        CZ
+admin-c:        JV6564-RIPE
+address:        CZECH NEWS CENTER a.s.
+address:        Komunardu 1584/42
+address:        170 00 Prague
+phone:          +420 608 255 443
+
+
+* Closing client socket ...
+./isa-tazatel -w 193.0.6.135 -q mobilmania.cz -d 8.8.8.8
+======== DNS ===========
+A	85.207.58.46
+NS	ns1.ignum.com.
+NS	ns2.ignum.cz.
+SOA   	ns1.ignum.com.
+admin email hostmaster@ignum.cz.
+
+====== WHOIS:===========
+inetnum:        85.207.58.32 - 85.207.58.63
+netname:        CNC-CZ
+descr:          BlueTone-CRa-CZ
+descr:          Fourth address block
+country:        CZ
+admin-c:        JV6564-RIPE
+address:        CZECH NEWS CENTER a.s.
+address:        Komunardu 1584/42
+address:        170 00 Prague
+phone:          +420 608 255 443
+
+
+* Closing client socket ...
+./isa-tazatel -w 193.0.6.135 -q 85.207.58.46 -d 8.8.8.8
+======== DNS ===========
+PTR  	85-207-58-46.static.bluetone.cz
+SOA     ns.bluetone.cz.
+admin email root@bluetone.cz.
+
+====== WHOIS:===========
+inetnum:        85.207.58.32 - 85.207.58.63
+netname:        CNC-CZ
+descr:          BlueTone-CRa-CZ
+descr:          Fourth address block
+country:        CZ
+admin-c:        JV6564-RIPE
+address:        CZECH NEWS CENTER a.s.
+address:        Komunardu 1584/42
+address:        170 00 Prague
+phone:          +420 608 255 443
+
+
+* Closing client socket ...
+./isa-tazatel -w 193.0.6.135 -q vutbr.cz -d 8.8.8.8
+======== DNS ===========
+A	147.229.2.90
+MX	5 mx.vutbr.cz
+NS	pipit.cis.vutbr.cz.
+NS	rhino.cis.vutbr.cz.
+SOA   	rhino.cis.vutbr.cz.
+admin email hostmaster@vutbr.cz.
+
+====== WHOIS:===========
+inetnum:        147.229.0.0 - 147.229.254.255
+netname:        VUTBRNET
+descr:          Brno University of Technology
+descr:          VUTBR-NET1
+country:        CZ
+admin-c:        CA6319-RIPE
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        601 90 Brno
+address:        The Czech Republic
+phone:          +420 541145453
+phone:          +420 723047787
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.nic.cz -q vutbr.cz -d 8.8.8.8
+======== DNS ===========
+A	147.229.2.90
+MX	5 mx.vutbr.cz
+NS	rhino.cis.vutbr.cz.
+NS	pipit.cis.vutbr.cz.
+SOA   	rhino.cis.vutbr.cz.
+admin email hostmaster@vutbr.cz.
+
+====== WHOIS  ===========
+domain:       vutbr.cz
+registrant:   SB:VUTBR-CZ
+admin-c:      VUTBR-TPODER
+admin-c:      CID:IHAZMUK
+nsset:        NSS:VUTBR:1
+keyset:       KEYSET-VUTBR.CZ:1
+registrar:    REG-INTERNET-CZ
+registered:   19.05.1994 02:00:00
+changed:      05.02.2019 10:36:30
+expire:       12.10.2023
+
+contact:      SB:VUTBR-CZ
+org:          Vysoke uceni technicke v Brne
+name:         Vysoke uceni technicke v Brne
+address:      Antoninska 548/1
+address:      Brno
+address:      601 90
+address:      CZ
+registrar:    REG-INTERNET-CZ
+created:      10.08.2001 22:13:00
+changed:      15.05.2018 21:32:00
+
+contact:      VUTBR-TPODER
+org:          Vysoké učení technické v Brně
+name:         Tomáš Podermański
+address:      Antonínská 548/1
+address:      Brno
+address:      601 90
+address:      Jihomoravský kraj
+address:      CZ
+registrar:    REG-INTERNET-CZ
+created:      05.02.2019 10:32:19
+
+contact:      CID:IHAZMUK
+org:          Vysoké učení technické v Brně
+name:         Ivo Hažmuk
+address:      Antonínská 548/1
+address:      Brno
+address:      601 90
+address:      Jihomoravský kraj
+address:      CZ
+registrar:    REG-INTERNET-CZ
+created:      06.10.2008 17:30:01
+changed:      05.08.2019 11:24:03
+
+nsset:        NSS:VUTBR:1
+nserver:      rhino.cis.vutbr.cz (147.229.3.10, 2001:67c:1220:e000::93e5:30a)
+nserver:      pipit.cis.vutbr.cz (77.93.219.110, 2a01:430:120::4d5d:db6e)
+tech-c:       CID:IHAZMUK
+tech-c:       VUTBR-TPODER
+registrar:    REG-INTERNET-CZ
+created:      14.10.2008 11:03:11
+changed:      05.02.2019 10:45:05
+
+keyset:       KEYSET-VUTBR.CZ:1
+dnskey:       257 3 5 AwEAAfhR+s/4SLZZNA+kD2u1UgYBUu+X3Avi60QCaE1o2STterM405s8mWMWJOlZGtjjIky3TEMxQ0+ZtMbEeJu2wNDLdV/XglX+pJAjyy728WJH4u2/gJR8ZWsEIc0Jwb4FjwmBiF2Koz0SGVvrzEZ9T1H7dHq2X6f8KzYBotJyrAIWr9tZi/9tHrngZJ5wXELmMPWCfEFapdQMoKWoNvzrMYFli17RMz7gJzCmNxMRV8/WkjsNPgYsTKpsAT8qEsXiTN9987AIKPHvc5j+/njq+fTXdOqGVpIgSiso+qJMddEMBcu/MBBYVFOwRQe1ez2tMwIX7y5mwDvK0wsmyRvHugfFuxSnfiJvQr05kSnj0wxD9s9LNhrF4PocrcYqnBN/lBx9D6633jJ3zT3T5Foe/Vj9A/X7F2oN6FOkdwO+YSEUot980pJQut6DR22UP4bLakyDMiTdOQ31c/dRIoTsccxw+838pXFyEPgiqOHRSeN/w9km6BIDcl+32Xq97kXSMQH6AxOUsx9/Mxdj7ISwbS4utaAWoP460+TMcnfJfWfBNEWhuFvnfB9l63ZjZToB2PUVhrTxRwKUlfMLegSJKoZfiae82kK1pN4xFYyquKSykm/oXsM2w4OQvpqGcTwAXzZ5s95J45f7PsCap0bscGKumxsHcDswWpUz/UVosIrr
+tech-c:       CID:IHAZMUK
+tech-c:       VUTBR-TPODER
+registrar:    REG-INTERNET-CZ
+created:      13.10.2008 10:27:37
+changed:      14.02.2019 13:36:06
+
+
+
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q vutbr.cz -d 8.8.8.8
+======== DNS ===========
+A	147.229.2.90
+MX	5 mx.vutbr.cz
+NS	pipit.cis.vutbr.cz.
+NS	rhino.cis.vutbr.cz.
+SOA   	rhino.cis.vutbr.cz.
+admin email hostmaster@vutbr.cz.
+
+====== WHOIS:===========
+inetnum:        147.229.0.0 - 147.229.254.255
+netname:        VUTBRNET
+descr:          Brno University of Technology
+descr:          VUTBR-NET1
+country:        CZ
+admin-c:        CA6319-RIPE
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        601 90 Brno
+address:        The Czech Republic
+phone:          +420 541145453
+phone:          +420 723047787
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q www.google.com -d 8.8.8.8
+======== DNS ===========
+AAAA	2a00:1450:4014:800::2004
+A	216.58.201.68
+SOA   	ns1.google.com.
+admin email dns-admin@google.com.
+
+====== WHOIS:===========
+netname:        IE-GOOGLE-2a00-1450-4000-1
+descr:          EU metro frontend
+country:        ie
+admin-c:        GOOG1-RIPE
+admin-c:        GOOG-RIPE
+admin-c:        JWS7-RIPE
+address:        Google Ireland Limited
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q google.com -d 8.8.8.8
+======== DNS ===========
+AAAA	2a00:1450:4014:80d::200e
+A	216.58.201.110
+MX	40 alt3.aspmx.l.google.com
+MX	20 alt1.aspmx.l.google.com
+MX	30 alt2.aspmx.l.google.com
+MX	10 aspmx.l.google.com
+MX	50 alt4.aspmx.l.google.com
+NS	ns3.google.com.
+NS	ns4.google.com.
+NS	ns2.google.com.
+NS	ns1.google.com.
+SOA   	ns1.google.com.
+admin email dns-admin@google.com.
+
+====== WHOIS:===========
+netname:        IE-GOOGLE-2a00-1450-4000-1
+descr:          EU metro frontend
+country:        ie
+admin-c:        GOOG1-RIPE
+admin-c:        GOOG-RIPE
+admin-c:        JWS7-RIPE
+address:        Google Ireland Limited
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q 8.8.8.8 -d 8.8.8.8
+======== DNS ===========
+PTR  	dns.google
+AAAA	2001:4860:4860::8844
+AAAA	2001:4860:4860::8888
+A	8.8.4.4
+A	8.8.8.8
+NS	ns1.zdns.google.
+NS	ns2.zdns.google.
+NS	ns3.zdns.google.
+NS	ns4.zdns.google.
+SOA     ns1.zdns.google.
+admin email dns-admin@google.com.
+
+====== WHOIS:===========
+inetnum:        6.0.0.0 - 13.115.255.255
+netname:        NON-RIPE-NCC-MANAGED-ADDRESS-BLOCK
+descr:          IPv4 address block not managed by the RIPE NCC
+country:        EU # Country is really world wide
+admin-c:        IANA1-RIPE
+admin-c:        IANA1-RIPE
+address:        see http://www.iana.org.
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q azet.sk -d 8.8.8.8
+======== DNS ===========
+A	91.235.52.77
+MX	0 smtp2.azet.sk
+NS	ns3.etech.sk.
+NS	ns2.etech.sk.
+NS	ns1.etech.sk.
+SOA   	ns1.etech.sk.
+admin email hostmaster@etech.sk.
+
+====== WHOIS:===========
+inetnum:        91.235.52.0 - 91.235.55.255
+netname:        AZET-NET1
+descr:          Ringier Axel Springer Slovakia a.s. Prievozska 14 Bratislava
+descr:          Azet.sk, a.s.
+country:        SK
+admin-c:        PI1332-RIPE
+admin-c:        AZ1234
+admin-c:        AZ1234
+address:        Prievozska 14 Bratislava, Slovak Republic
+address:        Prievozska 14
+address:        Bratislava
+address:        Slovak republic
+address:        KOREX networks, s.r.o.
+address:        Dolne Rudiny 1/A
+address:        010 01 Zilina
+address:        Slovakia
+phone:          +421905146235
+phone:          +421415555233
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q www.azet.sk -d 8.8.8.8
+======== DNS ===========
+CNAME	lb-home.s.etech.sk.
+CNAME	lb-home.s.etech.sk.
+A	91.235.52.77
+CNAME	lb-home.s.etech.sk.
+CNAME  lb-home.s.etech.sk.
+CNAME	lb-home.s.etech.sk.
+CNAME	lb-home.s.etech.sk.
+SOA   	ns1.etech.sk.
+admin email hostmaster@etech.sk.
+
+====== WHOIS:===========
+inetnum:        91.235.52.0 - 91.235.55.255
+netname:        AZET-NET1
+descr:          Ringier Axel Springer Slovakia a.s. Prievozska 14 Bratislava
+descr:          Azet.sk, a.s.
+country:        SK
+admin-c:        PI1332-RIPE
+admin-c:        AZ1234
+admin-c:        AZ1234
+address:        Prievozska 14 Bratislava, Slovak Republic
+address:        Prievozska 14
+address:        Bratislava
+address:        Slovak republic
+address:        KOREX networks, s.r.o.
+address:        Dolne Rudiny 1/A
+address:        010 01 Zilina
+address:        Slovakia
+phone:          +421905146235
+phone:          +421415555233
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q www.pokec.sk -d 8.8.8.8
+======== DNS ===========
+CNAME	pokec.sk.
+CNAME	pokec.sk.
+A	91.235.53.86
+CNAME  pokec.sk.
+MX	0 smtp2.azet.sk
+CNAME	pokec.sk.
+NS	ns2.etech.sk.
+NS	ns3.etech.sk.
+NS	ns1.etech.sk.
+CNAME	pokec.sk.
+CNAME  pokec.sk.
+SOA   	ns1.etech.sk.
+admin email hostmaster@etech.sk.
+
+====== WHOIS:===========
+inetnum:        91.235.52.0 - 91.235.55.255
+netname:        AZET-NET1
+descr:          Ringier Axel Springer Slovakia a.s. Prievozska 14 Bratislava
+descr:          Azet.sk, a.s.
+country:        SK
+admin-c:        PI1332-RIPE
+admin-c:        AZ1234
+admin-c:        AZ1234
+address:        Prievozska 14 Bratislava, Slovak Republic
+address:        Prievozska 14
+address:        Bratislava
+address:        Slovak republic
+address:        KOREX networks, s.r.o.
+address:        Dolne Rudiny 1/A
+address:        010 01 Zilina
+address:        Slovakia
+phone:          +421905146235
+phone:          +421415555233
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q pokec.sk -d 8.8.8.8
+======== DNS ===========
+A	91.235.53.86
+MX	0 smtp2.azet.sk
+NS	ns2.etech.sk.
+NS	ns3.etech.sk.
+NS	ns1.etech.sk.
+SOA   	ns1.etech.sk.
+admin email hostmaster@etech.sk.
+
+====== WHOIS:===========
+inetnum:        91.235.52.0 - 91.235.55.255
+netname:        AZET-NET1
+descr:          Ringier Axel Springer Slovakia a.s. Prievozska 14 Bratislava
+descr:          Azet.sk, a.s.
+country:        SK
+admin-c:        PI1332-RIPE
+admin-c:        AZ1234
+admin-c:        AZ1234
+address:        Prievozska 14 Bratislava, Slovak Republic
+address:        Prievozska 14
+address:        Bratislava
+address:        Slovak republic
+address:        KOREX networks, s.r.o.
+address:        Dolne Rudiny 1/A
+address:        010 01 Zilina
+address:        Slovakia
+phone:          +421905146235
+phone:          +421415555233
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q alza.sk -d 8.8.8.8
+======== DNS ===========
+A	185.181.176.19
+MX	0 alza-sk.mail.protection.outlook.com
+NS	alfa.ns.active24.cz.
+NS	beta.ns.active24.cz.
+NS	gama.ns.active24.sk.
+SOA     alfa.ns.active24.cz.
+admin email hostmaster@active24.cz.
+
+====== WHOIS:===========
+inetnum:        185.181.176.0 - 185.181.179.255
+netname:        CZ-ALZACZ-20161212
+country:        CZ
+admin-c:        ALZA2-RIPE
+admin-c:        MU1849-RIPE
+address:        Jatecni 33a
+address:        17000
+address:        Praha
+address:        CZECH REPUBLIC
+address:        Jatecni 33a
+address:        Praha 7
+address:        170 00
+address:        Czech Republic
+phone:          +420225340111
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q www.alza.sk -d 8.8.8.8
+======== DNS ===========
+A	185.181.176.19
+SOA     alfa.ns.active24.cz.
+admin email hostmaster@active24.cz.
+
+====== WHOIS:===========
+inetnum:        185.181.176.0 - 185.181.179.255
+netname:        CZ-ALZACZ-20161212
+country:        CZ
+admin-c:        ALZA2-RIPE
+admin-c:        MU1849-RIPE
+address:        Jatecni 33a
+address:        17000
+address:        Praha
+address:        CZECH REPUBLIC
+address:        Jatecni 33a
+address:        Praha 7
+address:        170 00
+address:        Czech Republic
+phone:          +420225340111
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q www.seznam.sk -d 8.8.8.8
+======== DNS ===========
+CNAME	search.seznam.cz.
+AAAA	2a02:598:2::1120
+AAAA	2a02:598:a::79:120
+CNAME	search.seznam.cz.
+A	77.75.77.120
+A	77.75.79.120
+CNAME	search.seznam.cz.
+CNAME	search.seznam.cz.
+CNAME	search.seznam.cz.
+CNAME	search.seznam.cz.
+SOA   	ans.seznam.cz.
+admin email hostmaster@seznam.cz.
+
+====== WHOIS:===========
+netname:        DC-Kokura
+country:        CZ
+admin-c:        SZN5-RIPE
+admin-c:        PZ172-RIPE
+address:        Radlicka 3294/10 150 00 Prague 5 Czech Republic
+address:        Radlicka 3294/10 150 00 Prague 5 Czech Republic
+phone:          +420 602 126 570
+phone:          +420 234 694 111
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.ripe.net -q www.seznam.cz -d 8.8.8.8
+======== DNS ===========
+AAAA	2a02:598:3333:1::1
+AAAA	2a02:598:3333:1::2
+AAAA	2a02:598:4444:1::1
+AAAA	2a02:598:4444:1::2
+A	77.75.74.172
+A	77.75.74.176
+A	77.75.75.172
+A	77.75.75.176
+SOA   	ans.seznam.cz.
+admin email hostmaster@seznam.cz.
+
+====== WHOIS:===========
+netname:        DC-Nagano-dns
+descr:          SEZNAM - II
+country:        CZ
+admin-c:        SZN5-RIPE
+admin-c:        PZ172-RIPE
+address:        Radlicka 3294/10 150 00 Prague 5 Czech Republic
+address:        Radlicka 3294/10 150 00 Prague 5 Czech Republic
+phone:          +420 602 126 570
+phone:          +420 234 694 111
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.nic.cz -q www.seznam.cz -d 8.8.8.8
+======== DNS ===========
+AAAA	2a02:598:4444:1::2
+AAAA	2a02:598:3333:1::1
+AAAA	2a02:598:3333:1::2
+AAAA	2a02:598:4444:1::1
+A	77.75.74.176
+A	77.75.75.172
+A	77.75.75.176
+A	77.75.74.172
+SOA   	ans.seznam.cz.
+admin email hostmaster@seznam.cz.
+
+====== WHOIS ===========
+domain:       seznam.cz
+registrant:   SB:SEZNAM-CZ-AS
+admin-c:      SEZNAM-CZ-AS-TECH
+nsset:        SEZNAM-NAMESERVERS
+keyset:       SEZNAM-CZ-AS-ECDSA
+registrar:    REG-IGNUM
+status:       Sponsoring registrar change forbidden
+registered:   07.10.1996 02:00:00
+changed:      29.05.2019 14:05:04
+expire:       29.10.2020
+
+contact:      SB:SEZNAM-CZ-AS
+org:          Seznam.cz, a.s.
+name:         Seznam.cz, a.s.
+address:      Radlická 3294/10
+address:      Praha 5
+address:      15000
+address:      CZ
+registrar:    REG-IGNUM
+created:      10.08.2001 22:13:00
+changed:      27.11.2018 10:30:01
+
+contact:      SEZNAM-CZ-AS-TECH
+org:          Seznam.cz, a.s.
+name:         Vlastimil Pečínka
+address:      Radlická 3294/10
+address:      Praha 5
+address:      150 00
+address:      CZ
+registrar:    REG-MOJEID
+created:      27.02.2017 13:51:01
+changed:      04.12.2018 15:48:58
+
+nsset:        SEZNAM-NAMESERVERS
+nserver:      ans.seznam.cz (77.75.74.80, 2a02:598:3333::3)
+nserver:      ams.seznam.cz (77.75.75.230, 2a02:598:4444::4)
+tech-c:       SB:SEZNAM-CZ-AS
+registrar:    REG-IGNUM
+created:      18.10.2007 18:01:01
+changed:      11.12.2014 11:08:04
+
+keyset:       SEZNAM-CZ-AS-ECDSA
+dnskey:       257 3 13 +qiXHs6rSZgd2hCEut/9gKAbGHgNKE686hhiP6wUZqyXJKsV5Sm4mqXoM5zwxBdPl7Qi4cpKEj5pQdN1KwoAlg==
+tech-c:       SB:SEZNAM-CZ-AS
+registrar:    REG-IGNUM
+created:      27.03.2018 17:36:55
+
+
+
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.arin.net -q www.seznam.cz -d 8.8.8.8
+======== DNS ===========
+AAAA	2a02:598:4444:1::2
+AAAA	2a02:598:3333:1::1
+AAAA	2a02:598:3333:1::2
+AAAA	2a02:598:4444:1::1
+A	77.75.75.176
+A	77.75.74.172
+A	77.75.74.176
+A	77.75.75.172
+SOA   	ans.seznam.cz.
+admin email hostmaster@seznam.cz.
+
+====== WHOIS:===========
+NetRange:       2A00:: - 2A0F:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF
+NetHandle:      NET6-2A00-1
+NetName:        EU-ZZ-2A00
+CIDR:           2A00::/12
+Organization:   RIPE Network Coordination Centre (RIPE)
+Country:        NL
+Address:        P.O. Box 10096
+OrgTechPhone:  +31 20 535 4444
+OrgAbusePhone:  +31205354444
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.iana.org -q www.seznam.cz -d 8.8.8.8
+======== DNS ===========
+AAAA	2a02:598:3333:1::1
+AAAA	2a02:598:3333:1::2
+AAAA	2a02:598:4444:1::1
+AAAA	2a02:598:4444:1::2
+A	77.75.75.176
+A	77.75.74.172
+A	77.75.74.176
+A	77.75.75.172
+SOA   	ans.seznam.cz.
+admin email hostmaster@seznam.cz.
+
+====== WHOIS:===========
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.iana.org -q www.cesnet.cz -d 8.8.8.8
+======== DNS ===========
+AAAA	2001:718:1:101::4
+A	195.113.144.230
+MX	10 cartero.cesnet.cz
+MX	10 postino.cesnet.cz
+MX	100 mail.cesnet.cz
+SOA   	nsa.cesnet.cz.
+admin email hostmaster@cesnet.cz.
+
+====== WHOIS:===========
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.arin.net -q www.cesnet.cz -d 8.8.8.8
+======== DNS ===========
+AAAA	2001:718:1:101::4
+A	195.113.144.230
+MX	10 cartero.cesnet.cz
+MX	10 postino.cesnet.cz
+MX	100 mail.cesnet.cz
+SOA   	nsa.cesnet.cz.
+admin email hostmaster@cesnet.cz.
+
+====== WHOIS:===========
+NetRange:       2001:600:: - 2001:7FF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF
+NetHandle:      NET6-2001-600-1
+NetName:        EU-ZZ-2001-0600
+CIDR:           2001:600::/23
+Organization:   RIPE Network Coordination Centre (RIPE)
+Country:        NL
+Address:        P.O. Box 10096
+OrgTechPhone:  +31 20 535 4444
+OrgAbusePhone:  +31205354444
+
+
+* Closing client socket ...
+./isa-tazatel -w whois.nic.cz -q www.cesnet.cz -d 8.8.8.8
+======== DNS ===========
+AAAA	2001:718:1:101::4
+A	195.113.144.230
+MX	10 cartero.cesnet.cz
+MX	10 postino.cesnet.cz
+MX	100 mail.cesnet.cz
+SOA   	nsa.cesnet.cz.
+admin email hostmaster@cesnet.cz.
+
+====== WHOIS ===========
+domain:       cesnet.cz
+registrant:   SB:CESNET-ZSPO
+admin-c:      HELMUT_SVERENYAK
+admin-c:      J_GRUNTORAD
+admin-c:      PV2-RIPE
+nsset:        NSS:CESNET-ZSPO:1
+keyset:       AUTO-DKBCR1IXC8VDNKW85PFCL8FPB
+registrar:    REG-ACTIVE24
+registered:   06.10.1996 02:00:00
+changed:      06.09.2018 13:10:29
+expire:       29.10.2020
+
+contact:      SB:CESNET-ZSPO
+org:          CESNET, z.s.p.o.
+name:         CESNET, z.s.p.o.
+address:      Zikova 4
+address:      Praha 6
+address:      160 00
+address:      CZ
+registrar:    REG-ACTIVE24
+created:      10.08.2001 22:13:00
+changed:      15.05.2018 21:32:00
+
+contact:      HELMUT_SVERENYAK
+name:         Helmut Sverenyák
+address:      Zikova 4
+address:      Praha 6
+address:      160 00
+address:      CZ
+registrar:    REG-ACTIVE24
+created:      09.12.2003 09:20:00
+changed:      15.05.2018 21:32:00
+
+contact:      J_GRUNTORAD
+name:         Jan Gruntorad
+address:      Zikova 4
+address:      Praha 6
+address:      160 00
+address:      CZ
+registrar:    REG-ACTIVE24
+created:      10.08.2001 22:13:00
+changed:      15.05.2018 21:32:00
+
+contact:      PV2-RIPE
+name:         Pavel Vachek
+address:      Zikova 4
+address:      Praha 6
+address:      160 00
+address:      CZ
+registrar:    REG-ACTIVE24
+created:      10.08.2001 22:13:00
+changed:      07.06.2019 16:26:12
+
+nsset:        NSS:CESNET-ZSPO:1
+nserver:      decsys.vsb.cz
+nserver:      nsa.ces.net
+nserver:      nsa.cesnet.cz (195.113.144.228, 2001:718:1:101::144:228)
+tech-c:       SB:CESNET-ZSPO
+tech-c:       PV2-RIPE
+tech-c:       PAVEL_KACHA
+tech-c:       AK2268-RIPE
+tech-c:       OSKAR
+registrar:    REG-ACTIVE24
+created:      01.10.2007 02:00:00
+changed:      05.12.2017 14:38:50
+
+contact:      PAVEL_KACHA
+name:         Pavel Kacha
+address:      U Jezírka 873
+address:      Unhošť
+address:      273 51
+address:      CZ
+registrar:    REG-IGNUM
+created:      10.08.2001 22:13:00
+changed:      12.08.2019 14:06:06
+
+contact:      AK2268-RIPE
+name:         Andrea Kropacova
+address:      CZ
+registrar:    REG-CZNIC
+created:      10.08.2001 22:13:00
+changed:      15.05.2018 21:32:00
+
+contact:      OSKAR
+name:         Ondřej Caletka
+registrar:    REG-MOJEID
+created:      26.10.2010 10:41:13
+changed:      26.03.2019 16:06:12
+
+keyset:       AUTO-DKBCR1IXC8VDNKW85PFCL8FPB
+dnskey:       257 3 13 Qx/p2aSfnW38FMc/JgnjC+9nwSx3GD8mJVSjgtNDS/ASgnOjjzRa4ecYeZ8UgXZ2XYDftZoeMYCZNUJg4Xbwow==
+tech-c:       CZ-NIC
+registrar:    REG-CZNIC
+created:      06.09.2018 13:10:29
+changed:      01.09.2019 14:23:04
+
+contact:      CZ-NIC
+org:          CZ.NIC, z.s.p.o.
+name:         CZ.NIC, z.s.p.o.
+address:      Milesovska 1136/5
+address:      Praha 3
+address:      130 00
+address:      CZ
+registrar:    REG-CZNIC
+created:      17.10.2008 12:08:21
+changed:      15.05.2018 21:32:00
+
+./isa-tazatel -w whois.ripe.net -q tiskelnik.cz -d 188.123.110.135
+======== DNS ===========
+A	93.185.111.200
+MX	0 tiskelnik-cz.mail.protection.outlook.com
+NS	ns2.magichouse.eu.
+NS	ns1.magichouse.cz.
+SOA   	ns1.magichouse.cz.
+admin email spravce@magichouse.cz.
+
+====== WHOIS:===========
+inetnum:        93.185.111.0 - 93.185.111.255
+netname:        CUSTOMERS-VI
+descr:          network for our customers
+descr:          VSHOSTING II.
+country:        CZ
+admin-c:        VS2641-RIPE
+admin-c:        DS6745-RIPE
+admin-c:        JM6252-RIPE
+admin-c:        TR1888-RIPE
+address:        Sodomkova 1579/5
+address:        10200
+address:        Praha 10
+address:        Czech Republic
+phone:          +420246035835
+
+
+* Closing client socket ...
