@@ -332,7 +332,7 @@ int main(int argc, char **argv)
     struct addrinfo whois_server, *whois_infoptr, *whois_ptr;
     int result_for_whois;
 /*Regularne vyrazy pre whois.ripe.net a whois.arin.net*/
-    string input;
+  //  string input;
     std::regex inetnumReg("(inetnum:.*|netrange:.*|nethandle:.*)",std::regex_constants::icase);
     std::regex netnameReg("netname:.*",std::regex_constants::icase);
     std::regex descrReg("(descr:.*|organization:.*)",std::regex_constants::icase);
@@ -451,7 +451,7 @@ cout << "======== DNS =========== "<<"\n";
     /*KLIENT WHOIS*/
    /* NASLEDNE prevod domenoveho mena na IP adresu pomocou getaddrinfo a nasledne vytovrenie spojenia pomocou socket */
      memset(&whois_server,0,sizeof(whois_server));  //nastavy dany pocet bytov na hodnotu uvedenu v parametri c cize na 0 a vynulujeme
-  //   memset(&whois_infoptr,0,sizeof(whois_infoptr));
+    // memset(&whois_infoptr,0,sizeof(whois_infoptr));
      whois_server.ai_family = AF_UNSPEC; // IPV4
      whois_server.ai_socktype = SOCK_STREAM; // TCP
      whois_server.ai_protocol = 0; // implicitna hodnota 0, ktorá spôsobi priradenie vhodného protokolu či už to TCP alebo UDP
@@ -499,7 +499,6 @@ cout << "======== DNS =========== "<<"\n";
              exit(EXIT_FAILURE);
          }
      }
-
     std::string ip_hostname = hostnameToIp(hostname); // funkcia ktora prevedie domenove meno na IP
     const char *ip_adress = ip_hostname.c_str();
 
@@ -515,31 +514,37 @@ cout << "======== DNS =========== "<<"\n";
       }
       else
       {
-        const char *input_domain_for_niccz = input_for_niccz.c_str();
+        std::string skuskaneviem = getHostname(hostname);
+        const char *input_domain_for_niccz = skuskaneviem.c_str();
         whois_nic_cz(input_for_niccz,client_socket,result);
         if(std::regex_search(input_for_niccz,m,std::regex("(www.)")) != true)// ak sa na vstupe nenachadza www
         {
+          cout<<"ajpk0"<<"\n";
+          cout<<input_domain_for_niccz<<"\n";
           strcpy(buf,input_domain_for_niccz); // domenu nakopirujeme do buffra
+          cout<<input_domain_for_niccz<<"\n";
+          cout<<"ja som bufer "<<buf<<"\n";
           strcat(buf,"\r\n");
-
+          cout<<input_domain_for_niccz<<"\n";
+          cout<<"ja som bufer zase "<<buf<<"\n";
           bytenasend = send(client_socket, buf, strlen(buf),0);
           if (bytenasend == -1)
           {
             perror("ERROR in sendto 270\n");
           }
-
+          cout<<"BBBB\n";
           if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1)
           {  // MSG_WAITALL pri čitani sa čaká na všetky data
             err(1,"initial read() failed");
           }
-          input = buf;
-
+          std::string inputwhoisnic = buf;
+          cout<<"AAAAAAAA\n";
           cout << "====== WHOIS  ===========\n";
           //  cout << input;
-          if(std::regex_search(input,m,std::regex("(domain:)")) == true)
+          if(std::regex_search(inputwhoisnic,m,std::regex("(domain:)")) == true)
           {
-            std::size_t position = input.find("domain:"); // hladame domain preto od tadial chceme vystup
-            std::string finaloutput = input.substr(position);
+            std::size_t position = inputwhoisnic.find("domain:"); // hladame domain preto od tadial chceme vystup
+            std::string finaloutput = inputwhoisnic.substr(position);
             cout<<finaloutput<<"\n";
           }
           else
@@ -568,7 +573,7 @@ cout << "======== DNS =========== "<<"\n";
         err(1,"initial read() failed");
       }
 
-      input = buf;
+      std::string input = buf;
 
       cout << "====== WHOIS:===========\n";
       /* Parsovanie vystupu whois*/
@@ -586,6 +591,7 @@ cout << "======== DNS =========== "<<"\n";
     }
     close(client_socket);
     freeaddrinfo(whois_infoptr);
+    cout<<"AAAAAAAAAAAAAAAAAAAAdsd\n";
     printf("\n\n* Closing client socket ...\n");
     return 0;
 }
