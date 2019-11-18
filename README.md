@@ -77,7 +77,7 @@ int whois_nic_cz(std::string input_for_niccz, int client_socket, std::string res
 ```
 #### Makrá
 ```cpp #define BUFFER 65535 // velkost buffra, ktorý je použitý pri send a recv
-#define N 4096 // velkost N ktorá je použitá pri DNS query
+ #define N 4096 // velkost N ktorá je použitá pri DNS query
 ```
 
 ## Bonus
