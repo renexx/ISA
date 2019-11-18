@@ -1,33 +1,12 @@
 /********************************************************
- *      ISA 2019                                        *
- *      WHOIS tazatel - autor zadania Ing. Veselý       *
- *      vypracoval - René Bolf (xbolfr00@vutbr.cz)      *
- *                                                      *
- *******************************************************
- */
-
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <unistd.h> // getopt
-#include <err.h>
-#include <string>
-#include <iostream>
-#include <regex>
-#include <arpa/nameser.h>
-#include <resolv.h>
-#include <algorithm>
-
-using namespace std;    // Or using std::string;
-
-#define BUFFER 65535 // velkost buffra, ktorý je použitý pri send a recv
-#define N 4096 // velkost N ktorá je použitá pri DNS query
+ * Predmet: ISA FIT VUT 2019                            *
+ * Project: WHOIS tazatel - autor zadania Ing. Veselý   *
+ * @brief: Hlavný súbor: isa-tazatel.cpp                *
+ * @author : René Bolf (xbolfr00@vutbr.cz)              *
+ * Komentáre k funkciam sú v - isa-tazatel.h            *
+ *******************************************************/
+#include "isa-tazatel.h"
+using namespace std;    /* or using std::string*/
 
 /*Funkcia, ktorá vypíše help*/
 void print_usage()
@@ -50,28 +29,23 @@ void print_usage()
 void PrintRegexMatch(std::string str, std::regex reg)
 {
     std::smatch match;
-
     while(std::regex_search(str,match,reg))
     {
         std::cout << match.str() << "\n";
         str = match.suffix().str();
     }
 }
-/*Funkcia na preklad IP adresy na doménové meno*/
+/*Funkcia na preklad IP adresy na doménové meno, prekladá Ipv4 adresu na doménovu adresu*/
 std::string getHostname(const char *domName)
 {
     struct sockaddr_in klient_adress;
-    //struct sockaddr_in6 klient_ipv6adress;
-  //  memset(&klient_ipv6adress,0,sizeof(klient_ipv6adress));
     memset(&klient_adress, 0, sizeof klient_adress);
     klient_adress.sin_family = AF_INET;
-//    klient_ipv6adress.sin6_family = AF_INET6;
     char domain_name[100];
     strcpy(domain_name,domName);
 
     inet_pton(AF_INET, domain_name, &klient_adress.sin_addr);
     int result = getnameinfo((struct sockaddr*)&klient_adress,sizeof(klient_adress),domain_name,sizeof(domain_name),NULL,0,NI_NAMEREQD);
-
 
     std::string ip;
     ip += domain_name;
@@ -81,30 +55,30 @@ std::string getHostname(const char *domName)
 /*Funkcia, ktorá ziťuje IP adresu z doménového mena*/
 std::string  hostnameToIp(const char *domName)
 {
-  struct addrinfo client_adress, *client_infoptr, *client_ptr;
-  int result_for_client;
-  memset(&client_adress,0,sizeof(client_adress));
-  memset(&client_infoptr,0,sizeof client_infoptr);
-  client_adress.ai_family = AF_UNSPEC;
-  client_adress.ai_socktype = SOCK_STREAM;
-  client_adress.ai_protocol = 0;
-  char hostname[100];
-  strcpy(hostname,domName);
+    struct addrinfo client_adress, *client_infoptr, *client_ptr; /*addrinfo pretože sa používa getaddrinfo je potrebné vytvoriť pointre a následne ich uvolnit pomocou freeaddrinfo(client_infoptr)*/
+    int result_for_client; /* uklada sa sem vysledok getaddrinfo či sa to podarilo alebo nie ak to nieje 0 tak sa to nepodarilo*/
+    memset(&client_adress,0,sizeof(client_adress));
+    memset(&client_infoptr,0,sizeof client_infoptr);
+    client_adress.ai_family = AF_UNSPEC;
+    client_adress.ai_socktype = SOCK_STREAM;
+    client_adress.ai_protocol = 0;
+    char hostname[100];
+    strcpy(hostname,domName);
 
-  result_for_client = getaddrinfo(hostname,NULL,&client_adress,&client_infoptr);
-  if(result_for_client != 0)
-  {
-      fprintf(stderr, "%s: %s\n", hostname, gai_strerror(result_for_client));
-      exit(EXIT_FAILURE);
-  }
-  for(client_ptr = client_infoptr; client_ptr != NULL; client_ptr = client_ptr->ai_next)
-  {
-      getnameinfo(client_ptr->ai_addr,client_ptr->ai_addrlen,hostname,sizeof(hostname),NULL,0,NI_NUMERICHOST);
-  }
-  std::string ip;
-  ip += hostname; //premena hostname z charu na string
-  freeaddrinfo(client_infoptr); // uvolnenie kvoli getaddrinfo
-  return ip;
+    result_for_client = getaddrinfo(hostname,NULL,&client_adress,&client_infoptr); // premena z domeny na IP adresu
+    if(result_for_client != 0)
+    {
+        fprintf(stderr, "%s: %s\n", hostname, gai_strerror(result_for_client));
+        exit(EXIT_FAILURE);
+    }
+    for(client_ptr = client_infoptr; client_ptr != NULL; client_ptr = client_ptr->ai_next)
+    {
+        getnameinfo(client_ptr->ai_addr,client_ptr->ai_addrlen,hostname,sizeof(hostname),NULL,0,NI_NUMERICHOST); // konvertovanie binarnej adresy do čitatelnej formy
+    }
+    std::string ip;
+    ip += hostname; //premena hostname z charu na string
+    freeaddrinfo(client_infoptr); // uvolnenie kvoli getaddrinfo
+    return ip;
 }
 
 /*Funkcia, ktorá vykonáva DNS dotazy pomocou funkcií z resolv.h*/
@@ -125,13 +99,12 @@ std::string runDnsQuery(const char *dname, int nType)
     std::regex cname_dns("CNAME.*");
 
     std::cmatch m;
-    //std::string error;
     l = res_search(dname,ns_c_in,nType,nsbuf,N); //c_in internet N je velkost odpovedoveho bufra nsbuf
     if(l < 0)
     {
       return "ERROR";
     }
-    if(ns_initparse(nsbuf,l,&msg) < 0)// perror("NS_INITPARSE ");
+    if(ns_initparse(nsbuf,l,&msg) < 0)
       return "ERROR";
     for(x = 0; x < ns_msg_count(msg,ns_s_an); x++)
     {
@@ -139,10 +112,7 @@ std::string runDnsQuery(const char *dname, int nType)
           perror("NS PARSERR : "); // ns parrserr extrahuje informacie o zazname odpovedi a ulozi ho do rr čo je parameter odovzdany do inych rutinnych kniznic
           return "ERROR";
         }
-
         ns_sprintrr(&msg, &rr, NULL, NULL, dispbuf, sizeof(dispbuf));
-//prepinac na ipv6 RES_USE_INET6
-      //cout<<dispbuf;
       /*Parosvanie vystupu DNS zaznamov pomocou regexov*/
         PrintRegexMatch(dispbuf,ns_dns);
         PrintRegexMatch(dispbuf,aaaa_dns);
@@ -150,7 +120,6 @@ std::string runDnsQuery(const char *dname, int nType)
         PrintRegexMatch(dispbuf,a_dns);
         PrintRegexMatch(dispbuf,mx_dns);
     }
-
     std::string vypis;
     vypis += dispbuf; // premena char na string pretoze chceme vratit vypis a v maine ho spracovavat kvoli zaznamu SOA, ktorý sa musi samostatne sparsovat
     return vypis;
@@ -159,7 +128,6 @@ static bool soa_parser(std::string soa_query)
 {
   // parsovanie SOA zaznamu, kvoli ziskaniu admin emailu
     std::smatch m;
-  //  std::string error;
     std::regex soa_email("(SOA)(.+)\\.\\s(.+)(.+)(.+)(.+)\\."); // Regex na SOA
     if(soa_query == "ERROR")
     {
@@ -193,37 +161,39 @@ static bool soa_parser(std::string soa_query)
     else
       return false;
 }
-
-/*Táto funkcia je z knihy Pána Ing. Petr Matoušek, Ph.D., M.A. kapitola 3. Systém DNS strana 128 funkcia resolve */
+/*Táto funkcia je inspirovana z funkcie z knihy Pána Ing. Petr Matoušek, Ph.D., M.A. kapitola 3. Systém DNS strana 128 funkcia resolve */
 std::string  resolvePtr(const char* dname)
 {
-  in_addr_t addr4;
-  register int i;
-  int ipAddr[4] = {0,0,0,0};
-  char buf[N]; // buffer o velkosti N pričom N má velkost 4096
-  std::string nRet;
-  if((addr4 = inet_network(dname)) != -1){ // funkcia inet_network prevadza retazec v notaci IPv4 čisiel a bodiek na čislo v poradi bajtov (host byte order) ak je vstup neplatný vrati sa -1
-    for(i = 0; addr4; ){
-      ipAddr[i++] = addr4 & 0xFF;
-      addr4 >>= 8;
+    in_addr_t addr4;
+    register int i;
+    int ipAddr[4] = {0,0,0,0};
+    char buf[N]; // buffer o velkosti N pričom N má velkost 4096
+    std::string nRet;
+    if((addr4 = inet_network(dname)) != -1)
+    { // funkcia inet_network prevadza retazec v notaci IPv4 čisiel a bodiek na čislo v poradi bajtov (host byte order) ak je vstup neplatný vrati sa -1
+      for(i = 0; addr4; )
+      {
+        ipAddr[i++] = addr4 & 0xFF;
+        addr4 >>= 8;
+      }
+      sprintf(buf,"%u.%u.%u.%u.in-addr.arpa",ipAddr[i % 4], ipAddr[(i+1) % 4], ipAddr[(i+2) % 4], ipAddr[(i+3) % 4]);
+      nRet = runDnsQuery(buf,ns_t_ptr); // volanie funkci runDnsQuery kde parameter type je ns_t_ptr
+    //  cout <<"PTR " << nRet<<"\n";
+      std::smatch m;
+      if(std::regex_search(nRet,m,std::regex("(PTR)(\\s*)(.*).")) == true)
+      {
+        std::string ptr = m[1];
+        std::string space = m[2];
+        std::string domain_name_in_ptr = m[3];
+        std::stringstream ss;
+        ss<<ptr<<space<<"\t"<<domain_name_in_ptr;
+        std::string print_ptripv4 = ss.str();
+        cout<<print_ptripv4<<"\n";
+      }
     }
-    sprintf(buf,"%u.%u.%u.%u.in-addr.arpa",ipAddr[i % 4], ipAddr[(i+1) % 4], ipAddr[(i+2) % 4], ipAddr[(i+3) % 4]);
-    nRet = runDnsQuery(buf,ns_t_ptr); // volanie funkci runDnsQuery kde parameter type je ns_t_ptr
-  //  cout <<"PTR " << nRet<<"\n";
-    std::smatch m;
-    if(std::regex_search(nRet,m,std::regex("(PTR)(\\s*)(.*).")) == true)
-    {
-      std::string ptr = m[1];
-      std::string space = m[2];
-      std::string domain_name_in_ptr = m[3];
-      std::stringstream ss;
-      ss<<ptr<<space<<"\t"<<domain_name_in_ptr;
-      std::string print_ptripv4 = ss.str();
-      cout<<print_ptripv4<<"\n";
-    }
-  }
-  return nRet;
+    return nRet;
 }
+/*FUNKCIA na zaznam PTR pre ipv6 adresu*/
 std::string ptripv6(const char* str)
 {
     struct in6_addr addr;
@@ -242,29 +212,34 @@ std::string ptripv6(const char* str)
                                             (int)addr.s6_addr[10], (int)addr.s6_addr[11],
                                             (int)addr.s6_addr[12], (int)addr.s6_addr[13],
                                             (int)addr.s6_addr[14], (int)addr.s6_addr[15]);
-    //  cout<<str2<<"\n";
+     /* Reverovanie ipv6 adresy*/
       std::string reverse = str2;
       int len = reverse.length();
       int n = len - 1;
-      for(int i = 0; i < (len/2);i++){
+      for(int i = 0; i < (len/2);i++)
+      {
+        /* swap */
         char temp = reverse[i];
         reverse[i] = reverse[n];
         reverse[n] = temp;
         n = n - 1;
       }
-
+      /*za každý jeden bit reverzovanej adresy pridáme bodku*/
       std::stringstream ss;
-      for(int i = 0; i < reverse.size(); i ++){
+      for(int i = 0; i < reverse.size(); i ++)
+      {
         ss << reverse[i] << ".";
       }
-
+      /*IPv6 adresa ktorá je rezervovana a za kazdym bitom je bodka tak k nej pripojime ip6.arpa čo je specialna domena pre uchovavanie ptr záznamov pre ipv6 adresu*/
       std::string vysledok = ss.str();
       vysledok = vysledok + "ip6.arpa";
       const char* ipv6 = vysledok.c_str();
-      nRet = runDnsQuery(ipv6,ns_t_ptr);
+      nRet = runDnsQuery(ipv6,ns_t_ptr); // dotazovanie sa na PTR
       std::smatch m;
       std::string ptr_result;
-      if(std::regex_search(nRet,m,std::regex("(PTR)(\\s*)(.*).")) == true){
+      /*Parsovanie PTR zaznamu*/
+      if(std::regex_search(nRet,m,std::regex("(PTR)(\\s*)(.*).")) == true)
+      {
         std::string ptr = m[1];
         std::string medzera = m[2];
         domain_name_in_ptr = m[3];
@@ -273,7 +248,7 @@ std::string ptripv6(const char* str)
         join<< ptr<< medzera<<"\t" << domain_name_in_ptr;
         ptr_result = join.str();
         cout<<ptr_result<<"\n";
-
+        /*Rejyrzvube dotazovanie sa na domenu, ktorá bola zistená z PTR záznamu*/
         std::string aaaa = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_aaaa); //AAAA zaznam
         std::string a = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_a); // A zaznam
         //  cout<<a;
@@ -283,85 +258,69 @@ std::string ptripv6(const char* str)
         std::string cname = runDnsQuery(domain_name_in_ptr.c_str(),ns_t_cname); // CNAME zaznam
         if(soa_parser(soa_query) == false)
         {
-          //std::string orezane = result;
-          //  cout<< "JA budem orezane "<<orezane<<"\n";
           std::size_t pos = domain_name_in_ptr.find(".");
           std:string str3 = domain_name_in_ptr.substr(pos + 1);
-          //  cout<<"ja som "<<str3<<"\n";
-
-          //  cout<<"Ja som domenove meno "<<domenove_meno<<"\n";
-
           std::string soa_query_authority = runDnsQuery(str3.c_str(),ns_t_soa);
           soa_parser(soa_query_authority);
-
         }
         else
         cout<<"SOA not found "<<"\n";
       }
-      //else
-      //cout<<"PTR not found "<<"\n";
-      //cout<<"JA SOM: "<< nRet<<"\n";
-
     }
     return domain_name_in_ptr;
 }
-
+/*Funkcia na pripojenie sa a parsovanie whois serveru whois.nic.cz*/
 int whois_nic_cz(std::string input_for_niccz, int client_socket, std::string result)
 {
-  std::smatch m;
-  int bytenasend;
-  char buf[BUFFER];
-  if(std::regex_search(input_for_niccz,m,std::regex("(www.)")) == true) // tu hladame pomocou regexu ci sa vo vstupe nachadza www. alebo nie ak ano tak musime orezat aby bolo bez wwww
-  {
-    std::string orezane = result;
-
-    std::size_t pos = input_for_niccz.find("."); // najdeme bodku
-    std::string niccz_without_www = input_for_niccz.substr(pos + 1); // a zobereme to co je za bodkov cize o poziciu dalej
-    const char *input_for_nic = niccz_without_www.c_str(); //mobilmania.cz
-    strcpy(buf,input_for_nic); // do buffru nakopirujeme domenu uz bez www
-    strcat(buf,"\r\n"); // whois podla rfc potrebuje \r\n
-
-    bytenasend = send(client_socket, buf, strlen(buf),0); // poslanie poziadavky na server whois.nic.cz
-    if (bytenasend == -1)
+    std::smatch m;
+    int bytenasend;
+    char buf[BUFFER];
+    if(std::regex_search(input_for_niccz,m,std::regex("(www.)")) == true) // tu hladame pomocou regexu ci sa vo vstupe nachadza www. alebo nie ak ano tak musime orezat aby bolo bez wwww
     {
-        perror("ERROR: \n");
+      std::string orezane = result;
+
+      std::size_t pos = input_for_niccz.find("."); // najdeme bodku
+      std::string niccz_without_www = input_for_niccz.substr(pos + 1); // a zobereme to co je za bodkov cize o poziciu dalej
+      const char *input_for_nic = niccz_without_www.c_str(); //mobilmania.cz
+      strcpy(buf,input_for_nic); // do buffru nakopirujeme domenu uz bez www
+      strcat(buf,"\r\n"); // whois podla rfc potrebuje \r\n
+
+      bytenasend = send(client_socket, buf, strlen(buf),0); // poslanie poziadavky na server whois.nic.cz
+      if (bytenasend == -1)
+      {
+          perror("ERROR: \n");
+      }
+
+      if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1)
+      {  // MSG_WAITALL pri čitani sa čaká na všetky data preto som pouzil recv a nie write
+          err(1,"initial read() failed");
+      }
+      std::string input = buf;
+
+      cout << "====== WHOIS ===========\n";
+
+      if(std::regex_search(input,m,std::regex("(domain:)")) == true)
+      {
+        std::size_t position = input.find("domain:"); // hladame domain preto od tadial chceme vystup
+        std::string finaloutput = input.substr(position);
+        cout<<finaloutput<<"\n";
+
+      }
+      else
+      {
+        cout<<"NO entries found "<<"\n";
+        return EXIT_FAILURE;
+      }
     }
-
-    if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1)
-    {  // MSG_WAITALL pri čitani sa čaká na všetky data preto som pouzil recv a nie write
-        err(1,"initial read() failed");
-    }
-    std::string input = buf;
-
-    cout << "====== WHOIS ===========\n";
-
-    if(std::regex_search(input,m,std::regex("(domain:)")) == true)
-    {
-      std::size_t position = input.find("domain:"); // hladame domain preto od tadial chceme vystup
-      std::string finaloutput = input.substr(position);
-      cout<<finaloutput<<"\n";
-
-    }
-    else
-    {
-      cout<<"NO entries found for "<<"\n";
-      return EXIT_FAILURE;
-    }
-  }
-
 }
 
-
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     int option;
     int client_socket, port_number, bytenasend, byteread;
     socklen_t len;
     const char *addr;
-
-
     struct hostent *hostent_dns;
-
-
     extern char *optarg;
     bool q_flag = false;
     bool w_flag = false;
@@ -371,9 +330,8 @@ int main(int argc, char **argv) {
     int i = 0;
     int msg_size;
     struct addrinfo whois_server, *whois_infoptr, *whois_ptr;
-
     int result_for_whois;
-
+/*Regularne vyrazy pre whois.ripe.net a whois.arin.net*/
     string input;
     std::regex inetnumReg("(inetnum:.*|netrange:.*|nethandle:.*)",std::regex_constants::icase);
     std::regex netnameReg("netname:.*",std::regex_constants::icase);
@@ -389,23 +347,16 @@ int main(int argc, char **argv) {
     std::regex orgtechPhoneReg("OrgTechPhone:.*",std::regex_constants::icase);
     std::regex orgAbusePhoneReg("OrgAbusePhone:.*",std::regex_constants::icase);
 
-
-    /*------------- REGEX FOR WHOIS.NIC.CZ NAKOIEC NIESU POUZITE VYSTUP je PLNY jedine KOMENTY su odstránené --------------*/
-  /*  std::regex domianReg("domain:.*",std::regex_constants::icase);
-    std::regex registrantReg("registrant:.*",std::regex_constants::icase);
-    std::regex registrarReg("registrar:.*",std::regex_constants::icase);
-    std::regex orgReg("org:.*",std::regex_constants::icase);
-    std::regex nameReg("name:.*",std::regex_constants::icase);
-    std::regex contactReg("contact:.*",std::regex_constants::icase);
-    std::regex nserverReg("nserver:.*",std::regex_constants::icase);*/
-
+/*PARSOVANIE ARGUMENTOV POMOCOU GETOPT()*/
     if(argc < 5 || argc > 7)
     {
         fprintf(stderr, "Error arguments\n");
         print_usage();
     }
-    while ((option = getopt(argc, argv, "q:w:d:")) != -1){
-       switch (option) {
+    while ((option = getopt(argc, argv, "q:w:d:")) != -1)
+    {
+       switch (option)
+        {
            case 'q':
                    if(q_flag == false)
                    {
@@ -447,34 +398,34 @@ int main(int argc, char **argv) {
 
 cout << "======== DNS =========== "<<"\n";
 
-
-      if(d_flag == true)
+/* KED JE zvoleny prepínac -d <IP>*/
+    if(d_flag == true)
+    {
+      char buf[16];
+      if (inet_pton(AF_INET,dns,buf)) // kontrola či je to ip adresa ak nieje skoci sa do else a vypise sa chyba ak je
       {
-        char buf[16];
+        res_init(); // inicializujeme res strukturu
 
-        if (inet_pton(AF_INET,dns,buf)) // kontrola či je to ip adresa ak nieje skoci sa do else a vypise sa chyba ak je
-        {
-          res_init(); // inicializujeme res strukturu
-
-          if ((hostent_dns = gethostbyname(dns)) == NULL) {
-              fprintf(stderr,"ERROR: no such host as %s\n", dns);
-              exit(EXIT_FAILURE);
-            }
-          (void)memcpy((void*)&_res.nsaddr_list[0].sin_addr,(void*)hostent_dns->h_addr_list[0],(size_t)hostent_dns->h_length); // nakopirovanie ip do strukturu res
-          _res.nscount = 1; // nastavenie res_nscount na 1 z dôvodu aby sa brala ip ako prvá
-        }
-        else if(inet_pton(AF_INET6,dns,buf))
-        {
-          fprintf(stderr, "IPV6 address is not supported %s\n",dns);
-          exit(EXIT_FAILURE);
-        }
-        else
-        {
-          fprintf(stderr, "NO IP addres as %s\n",dns);
-          exit(EXIT_FAILURE);
-        }
+        if ((hostent_dns = gethostbyname(dns)) == NULL)
+         {
+            fprintf(stderr,"ERROR: no such host as %s\n", dns);
+            exit(EXIT_FAILURE);
+          }
+        (void)memcpy((void*)&_res.nsaddr_list[0].sin_addr,(void*)hostent_dns->h_addr_list[0],(size_t)hostent_dns->h_length); // nakopirovanie ip do strukturu res
+        _res.nscount = 1; // nastavenie res_nscount na 1 z dôvodu aby sa brala ip ako prvá
       }
-
+      else if(inet_pton(AF_INET6,dns,buf))
+      {
+        fprintf(stderr, "IPV6 address is not supported %s\n",dns);
+        exit(EXIT_FAILURE);
+      }
+      else
+      {
+        fprintf(stderr, "NO IP addres as %s\n",dns);
+        exit(EXIT_FAILURE);
+      }
+    }
+/*VOLANIE FUNKCII*/
     std::string result = getHostname(hostname); // prevedieme IP adresu na domenove meno pretože funkcie v runDnsQuery pracuju len s domenovym menom
     std::string orezane = result;
 
@@ -496,9 +447,8 @@ cout << "======== DNS =========== "<<"\n";
     {
       std::string soa_query_authority = runDnsQuery(domain,ns_t_soa);
       soa_parser(soa_query_authority);
-
     }
-
+    /*KLIENT WHOIS*/
    /* NASLEDNE prevod domenoveho mena na IP adresu pomocou getaddrinfo a nasledne vytovrenie spojenia pomocou socket */
      memset(&whois_server,0,sizeof(whois_server));  //nastavy dany pocet bytov na hodnotu uvedenu v parametri c cize na 0 a vynulujeme
   //   memset(&whois_infoptr,0,sizeof(whois_infoptr));
@@ -506,7 +456,6 @@ cout << "======== DNS =========== "<<"\n";
      whois_server.ai_socktype = SOCK_STREAM; // TCP
      whois_server.ai_protocol = 0; // implicitna hodnota 0, ktorá spôsobi priradenie vhodného protokolu či už to TCP alebo UDP
      struct in6_addr serveraddr;
-
      result_for_whois = inet_pton(AF_INET,whois,&serveraddr);
      if(result_for_whois == 1) /*valid ipv4 text address*/
      {
@@ -603,7 +552,6 @@ cout << "======== DNS =========== "<<"\n";
 
     }
 
-
     else // ak to neni whois.nic.cz ale nejaky iny whois server
     {
       strcpy(buf,ip_adress); // ip adresu nakopirujeme do buffra
@@ -623,7 +571,7 @@ cout << "======== DNS =========== "<<"\n";
       input = buf;
 
       cout << "====== WHOIS:===========\n";
-
+      /* Parsovanie vystupu whois*/
       PrintRegexMatch(input,inetnumReg);
       PrintRegexMatch(input,netnameReg);
       PrintRegexMatch(input,cidrReg);     /*CIDR in whois.arin.net because i liked it*/
@@ -635,14 +583,9 @@ cout << "======== DNS =========== "<<"\n";
       PrintRegexMatch(input,rtechPhoneReg);
       PrintRegexMatch(input,orgtechPhoneReg);
       PrintRegexMatch(input,orgAbusePhoneReg);
-
     }
     close(client_socket);
     freeaddrinfo(whois_infoptr);
     printf("\n\n* Closing client socket ...\n");
-
     return 0;
-
-
-
 }
