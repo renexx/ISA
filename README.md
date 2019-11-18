@@ -19,12 +19,15 @@ Pri DNS nás zaujímaju tieto DNS záznamy: *A, AAAA, MX, CNAME, NS, SOA, PTR*
 
 ## Návrh riešenia a Implementácia
 ### WHOIS
-Program bol riešený pomocou BSD socketov a teda funkcií ako sú ```cpp
+Program bol riešený pomocou BSD socketov a teda funkcií ako sú
+```
 socket(int family, int type, int protocol)
-``` pre vytvorenie a inicializáciu schránky (socketu).
-pre aktívne pripojenie na strane klienta```cpp
+```
+pre vytvorenie a inicializáciu schránky (socketu).
+pre aktívne pripojenie na strane klienta```
 int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen)
-``` a pre výmenu dát```cpp
+```
+ a pre výmenu dát```
 ssize_t recv(int sockfd, void *buf, size_t len, int flags)
 ssize_t send(int sockfd, const void *msg, size_t len, int flags)
 ```
@@ -62,8 +65,7 @@ Je potrebné modifikovať *_res štrukturu*. Na začiatku je potrebné inicializ
 #include <algorithm>
 ```
 #### funkcie
-```
-cpp void print_usage();
+```cpp void print_usage();
 void PrintRegexMatch(std::string str, std::regex reg);
 std::string getHostname(const char *domName);
 std::string hostnameToIp(const char *domName);
