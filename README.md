@@ -378,5 +378,3 @@ Vysokého učení technického v Brně: VUTIUM, 2014, ISBN 978-80-214-3766-1.
 - dokumentacia.pdf
 - test.txt
 test.txt obsahuje výstup z testov
-## Obrázky testovania
-![alt text][hoho]
