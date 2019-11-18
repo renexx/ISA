@@ -79,6 +79,251 @@ int whois_nic_cz(std::string input_for_niccz, int client_socket, std::string res
 ```cpp #define BUFFER 65535 // velkost buffra, ktorý je použitý pri send a recv
  #define N 4096 // velkost N ktorá je použitá pri DNS query
 ```
+## Testovanie
+Na svojom osobnom počítači Linux Ubuntu, a na školskom servery merlin.
+Pri testovaní som porovnával výsledky pri DNS záznamoch napríklad pomocou:
+- https://dnslookup.online/soa.html
+- https://dns.google.com/
+Pri prepínači -d som testoval rôzne IP adresy a to odtialto
+- https://public-dns.info/nameserver/sk.html
+a Pri WHOIS stránky ako:
+- whois.ripe.net https://apps.db.ripe.net/db-web-ui/#/query
+- whois.arin.net
+- whois.nic.cz (treba vkladať doménu pozor nato) https://www.nic.cz/whois/
+- whois.iana.org(vracia len inetnum alebo nič, pretože referuje na iný whois server) https://www.iana.org/whois
+
+./isa-tazatel -q www.fit.vutbr.cz -w whois.ripe.net
+======== DNS ===========
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA   	guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+netname:        VUTBR-TCZ
+descr:          VUTBR6-NET
+country:        CZ
+admin-c:        MS6207-RIPE
+address:        Antoninska 548/1
+address:        60190
+address:        Brno
+address:        CZECH REPUBLIC
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+address:        Brno University of Technology
+address:        Center of Computing and Information Services
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+phone:          +420541145453
+phone:          +420 541 145 441
+phone:          +420 541145630
+
+--------------------------------------------------------------------------------------------
+./isa-tazatel -q 147.229.9.23 -w whois.ripe.net
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA   	guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+inetnum:        147.229.0.0 - 147.229.254.255
+netname:        VUTBRNET
+descr:          Brno University of Technology
+descr:          VUTBR-NET1
+country:        CZ
+admin-c:        CA6319-RIPE
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        601 90 Brno
+address:        The Czech Republic
+phone:          +420 541145453
+phone:          +420 723047787
+------------------------------------------------------------------------------
+./isa-tazatel -q 2001:67c:1220:809::93e5:917 -w whois.ripe.net
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA     guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+netname:        VUTBR-TCZ
+descr:          VUTBR6-NET
+country:        CZ
+admin-c:        MS6207-RIPE
+address:        Antoninska 548/1
+address:        60190
+address:        Brno
+address:        CZECH REPUBLIC
+address:        Brno University of Technology
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+address:        Brno University of Technology
+address:        Center of Computing and Information Services
+address:        Antoninska 1
+address:        Brno
+address:        601 90
+address:        The Czech Republic
+phone:          +420541145453
+phone:          +420 541 145 441
+phone:          +420 541145630
+
+
+./isa-tazatel -q 2001:67c:1220:809::93e5:917 -w whois.arin.net
+======== DNS ===========
+PTR  	www.fit.vutbr.cz
+AAAA  2001:67c:1220:809::93e5:917
+A	147.229.9.23
+MX	0 tereza.fit.vutbr.cz
+SOA   	guta.fit.vutbr.cz.
+admin email michal@fit.vutbr.cz.
+
+====== WHOIS:===========
+NetRange:       2001:600:: - 2001:7FF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF
+NetHandle:      NET6-2001-600-1
+NetName:        EU-ZZ-2001-0600
+CIDR:           2001:600::/23
+Organization:   RIPE Network Coordination Centre (RIPE)
+Country:        NL
+Address:        P.O. Box 10096
+OrgTechPhone:  +31 20 535 4444
+OrgAbusePhone:  +31205354444
+
+
+./isa-tazatel -q cesnet.cz -w whois.nic.cz
+======== DNS ===========
+AAAA	2001:718:1:101::4
+A	195.113.144.230
+MX	100 mail.cesnet.cz
+MX	50 cartero.cesnet.cz
+MX	10 postino.cesnet.cz
+NS	decsys.vsb.cz.
+NS	nsa.cesnet.cz.
+NS	nsa.ces.net.
+SOA   	nsa.cesnet.cz.
+admin email hostmaster@cesnet.cz.
+
+====== WHOIS  ===========
+domain:       cesnet.cz
+registrant:   SB:CESNET-ZSPO
+admin-c:      HELMUT_SVERENYAK
+admin-c:      J_GRUNTORAD
+admin-c:      PV2-RIPE
+nsset:        NSS:CESNET-ZSPO:1
+keyset:       AUTO-DKBCR1IXC8VDNKW85PFCL8FPB
+registrar:    REG-ACTIVE24
+registered:   06.10.1996 02:00:00
+changed:      06.09.2018 13:10:29
+expire:       29.10.2020
+
+contact:      SB:CESNET-ZSPO
+org:          CESNET, z.s.p.o.
+name:         CESNET, z.s.p.o.
+address:      Zikova 4
+address:      Praha 6
+address:      160 00
+address:      CZ
+registrar:    REG-ACTIVE24
+created:      10.08.2001 22:13:00
+changed:      15.05.2018 21:32:00
+
+contact:      HELMUT_SVERENYAK
+name:         Helmut Sverenyák
+address:      Zikova 4
+address:      Praha 6
+address:      160 00
+address:      CZ
+registrar:    REG-ACTIVE24
+created:      09.12.2003 09:20:00
+changed:      15.05.2018 21:32:00
+
+contact:      J_GRUNTORAD
+name:         Jan Gruntorad
+address:      Zikova 4
+address:      Praha 6
+address:      160 00
+address:      CZ
+registrar:    REG-ACTIVE24
+created:      10.08.2001 22:13:00
+changed:      15.05.2018 21:32:00
+
+contact:      PV2-RIPE
+name:         Pavel Vachek
+address:      Zikova 4
+address:      Praha 6
+address:      160 00
+address:      CZ
+registrar:    REG-ACTIVE24
+created:      10.08.2001 22:13:00
+changed:      07.06.2019 16:26:12
+
+nsset:        NSS:CESNET-ZSPO:1
+nserver:      decsys.vsb.cz
+nserver:      nsa.ces.net
+nserver:      nsa.cesnet.cz (195.113.144.228, 2001:718:1:101::144:228)
+tech-c:       SB:CESNET-ZSPO
+tech-c:       PV2-RIPE
+tech-c:       PAVEL_KACHA
+tech-c:       AK2268-RIPE
+tech-c:       OSKAR
+registrar:    REG-ACTIVE24
+created:      01.10.2007 02:00:00
+changed:      05.12.2017 14:38:50
+
+contact:      PAVEL_KACHA
+name:         Pavel Kacha
+address:      U Jezírka 873
+address:      Unhošť
+address:      273 51
+address:      CZ
+registrar:    REG-IGNUM
+created:      10.08.2001 22:13:00
+changed:      12.08.2019 14:06:06
+
+contact:      AK2268-RIPE
+name:         Andrea Kropacova
+address:      CZ
+registrar:    REG-CZNIC
+created:      10.08.2001 22:13:00
+changed:      15.05.2018 21:32:00
+
+contact:      OSKAR
+name:         Ondřej Caletka
+registrar:    REG-MOJEID
+created:      26.10.2010 10:41:13
+changed:      26.03.2019 16:06:12
+
+keyset:       AUTO-DKBCR1IXC8VDNKW85PFCL8FPB
+dnskey:       257 3 13 Qx/p2aSfnW38FMc/JgnjC+9nwSx3GD8mJVSjgtNDS/ASgnOjjzRa4ecYeZ8UgXZ2XYDftZoeMYCZNUJg4Xbwow==
+tech-c:       CZ-NIC
+registrar:    REG-CZNIC
+created:      06.09.2018 13:10:29
+changed:      01.09.2019 14:23:04
+
+contact:      CZ-NIC
+org:          CZ.NIC, z.s.p.o.
+name:         CZ.NIC, z.s.p.o.
+address:      Milesovska 1136/5
+address:      Praha 3
+address:      130 00
+address:      CZ
+registrar:    REG-CZNIC
+created:      17.10.2008 12:08:21
+changed:      15.05.2018 21:32:00
+
 
 ## Bonus
 - Prepínač -d a dotazovanie sa na iný DNS ako je v PC
