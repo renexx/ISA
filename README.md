@@ -20,15 +20,14 @@ Pri DNS nás zaujímaju tieto DNS záznamy: *A, AAAA, MX, CNAME, NS, SOA, PTR*
 ## Návrh riešenia a Implementácia
 ### WHOIS
 Program bol riešený pomocou BSD socketov a teda funkcií ako sú
-```
-socket(int family, int type, int protocol)
+``` cpp socket(int family, int type, int protocol)
 ```
 pre vytvorenie a inicializáciu schránky (socketu).
-pre aktívne pripojenie na strane klienta```
-int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen)
+pre aktívne pripojenie na strane klienta
+```cpp int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen)
 ```
- a pre výmenu dát```
-ssize_t recv(int sockfd, void *buf, size_t len, int flags)
+ a pre výmenu dát
+ ``` cpp ssize_t recv(int sockfd, void *buf, size_t len, int flags)
 ssize_t send(int sockfd, const void *msg, size_t len, int flags)
 ```
 Pomocou týchto funkcií je vytvorený klient. Získané údaje z whois servera sú parsované pomocou regulárnych výrazov *reg_search()*
@@ -39,8 +38,9 @@ Pri implementáci DNS resolveru sú využité funkcie  z knižnice *<resolv.h>* 
 *#include<sys/types.h>*
 *#inlcude<netinet/in.h>*
 *#inlcude<resolv.h>*
-Funkcia pre zasielanie požiadavok  ```cpp
-int res search(const char *dname, int class, int type, u char *answer, int len) ```
+Funkcia pre zasielanie požiadavok  
+```cpp int res search(const char *dname, int class, int type, u char *answer, int len)
+ ```
 Funkcia na inicializovanie dátovej štruktúry *ns_msg* pre spracovanie odpovedi *init_parse()*
 ### Prepínač -d a teda dotazovanie sa na iný DNS server ako je imiplicitne v počítači
 Je potrebné modifikovať *_res štrukturu*. Na začiatku je potrebné inicializovať celú túto štruktúru a to funkciou *res_init()*. Následne sa IP adresa za -d napriklad -d 8.8.8.8 vloží do *_res.nsaddr_list[0]* a *_res.nscount = 1* týmto sa docieli, že ak bude prepínač -d zadaný tak sa bude dotazovať na zadanú IP adresu DNS servera.
@@ -76,7 +76,7 @@ std::string ptripv6(const char *str);
 int whois_nic_cz(std::string input_for_niccz, int client_socket, std::string result);
 ```
 #### Makrá
-```#define BUFFER 65535 // velkost buffra, ktorý je použitý pri send a recv
+```cpp #define BUFFER 65535 // velkost buffra, ktorý je použitý pri send a recv
 #define N 4096 // velkost N ktorá je použitá pri DNS query
 ```
 
