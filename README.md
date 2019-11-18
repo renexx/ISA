@@ -92,7 +92,7 @@ a Pri WHOIS stránky ako:
 - whois.nic.cz (treba vkladať doménu pozor nato) https://www.nic.cz/whois/
 - whois.iana.org(vracia len inetnum alebo nič, pretože referuje na iný whois server) https://www.iana.org/whois
 
-./isa-tazatel -q www.fit.vutbr.cz -w whois.ripe.net
+```./isa-tazatel -q www.fit.vutbr.cz -w whois.ripe.net
 ======== DNS ===========
 AAAA  2001:67c:1220:809::93e5:917
 A	147.229.9.23
@@ -123,9 +123,9 @@ address:        The Czech Republic
 phone:          +420541145453
 phone:          +420 541 145 441
 phone:          +420 541145630
+```
 
---------------------------------------------------------------------------------------------
-./isa-tazatel -q 147.229.9.23 -w whois.ripe.net
+```./isa-tazatel -q 147.229.9.23 -w whois.ripe.net
 ======== DNS ===========
 PTR  	www.fit.vutbr.cz
 AAAA  2001:67c:1220:809::93e5:917
@@ -147,8 +147,8 @@ address:        601 90 Brno
 address:        The Czech Republic
 phone:          +420 541145453
 phone:          +420 723047787
-------------------------------------------------------------------------------
-./isa-tazatel -q 2001:67c:1220:809::93e5:917 -w whois.ripe.net
+```
+```./isa-tazatel -q 2001:67c:1220:809::93e5:917 -w whois.ripe.net
 ======== DNS ===========
 PTR  	www.fit.vutbr.cz
 AAAA  2001:67c:1220:809::93e5:917
@@ -181,8 +181,8 @@ phone:          +420541145453
 phone:          +420 541 145 441
 phone:          +420 541145630
 
-
-./isa-tazatel -q 2001:67c:1220:809::93e5:917 -w whois.arin.net
+```
+```./isa-tazatel -q 2001:67c:1220:809::93e5:917 -w whois.arin.net
 ======== DNS ===========
 PTR  	www.fit.vutbr.cz
 AAAA  2001:67c:1220:809::93e5:917
@@ -202,8 +202,8 @@ Address:        P.O. Box 10096
 OrgTechPhone:  +31 20 535 4444
 OrgAbusePhone:  +31205354444
 
-
-./isa-tazatel -q cesnet.cz -w whois.nic.cz
+```
+```./isa-tazatel -q cesnet.cz -w whois.nic.cz
 ======== DNS ===========
 AAAA	2001:718:1:101::4
 A	195.113.144.230
@@ -323,7 +323,7 @@ address:      CZ
 registrar:    REG-CZNIC
 created:      17.10.2008 12:08:21
 changed:      15.05.2018 21:32:00
-
+```
 
 ## Bonus
 - Prepínač -d a dotazovanie sa na iný DNS ako je v PC
