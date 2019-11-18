@@ -1,8 +1,12 @@
+# Project: Implementácia klienta Whois tazatel
+# author René Bolf <xbolfr00@stud.fit.vutbr.cz>
+# Debuf prepinač -g (v gdb bude vidno kod)
+
 CC = g++
-CFLAGS = -std=c++11 
+CFLAGS = -std=c++11
 run:
-	$(CC) $(CFLAGS) d6r.cpp -o d6r 
+	$(CC) $(CFLAGS) isa-tazatel.cpp -o isa-tazatel -lresolv
 
 clean:
-	rm -rf d6r
-	rm -rf d6r.out
+	rm -rf isa-tazatel
+	rm -rf isa-tazatel.out

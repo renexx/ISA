@@ -70,7 +70,7 @@ Je potrebné modifikovať *_res štrukturu*. Na začiatku je potrebné inicializ
 #include <algorithm>
 ```
 #### funkcie
-```cpp funkcie 
+```cpp funkcie
 void print_usage();
 void PrintRegexMatch(std::string str, std::regex reg);
 std::string getHostname(const char *domName);
@@ -376,3 +376,5 @@ Vysokého učení technického v Brně: VUTIUM, 2014, ISBN 978-80-214-3766-1.
 - Makefile
 - README.md
 - dokumentacia.pdf
+- test.txt
+test.txt obsahuje výstup z testov

@@ -312,6 +312,7 @@ int whois_nic_cz(std::string input_for_niccz, int client_socket, std::string res
         return EXIT_FAILURE;
       }
     }
+    return 0;
 }
 
 int main(int argc, char **argv)
