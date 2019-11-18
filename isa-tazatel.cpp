@@ -401,8 +401,8 @@ cout << "======== DNS =========== "<<"\n";
 /* KED JE zvoleny prepínac -d <IP>*/
     if(d_flag == true)
     {
-      char buf[16];
-      if (inet_pton(AF_INET,dns,buf)) // kontrola či je to ip adresa ak nieje skoci sa do else a vypise sa chyba ak je
+      char bufferford[16];
+      if (inet_pton(AF_INET,dns,bufferford)) // kontrola či je to ip adresa ak nieje skoci sa do else a vypise sa chyba ak je
       {
         res_init(); // inicializujeme res strukturu
 
@@ -451,7 +451,7 @@ cout << "======== DNS =========== "<<"\n";
     /*KLIENT WHOIS*/
    /* NASLEDNE prevod domenoveho mena na IP adresu pomocou getaddrinfo a nasledne vytovrenie spojenia pomocou socket */
      memset(&whois_server,0,sizeof(whois_server));  //nastavy dany pocet bytov na hodnotu uvedenu v parametri c cize na 0 a vynulujeme
-    // memset(&whois_infoptr,0,sizeof(whois_infoptr));
+     memset(&whois_infoptr,0,sizeof whois_infoptr );
      whois_server.ai_family = AF_UNSPEC; // IPV4
      whois_server.ai_socktype = SOCK_STREAM; // TCP
      whois_server.ai_protocol = 0; // implicitna hodnota 0, ktorá spôsobi priradenie vhodného protokolu či už to TCP alebo UDP
@@ -506,8 +506,8 @@ cout << "======== DNS =========== "<<"\n";
     {
       std::string input_for_niccz = getHostname(hostname);
       std::smatch m;
-      char buf[16];
-      if(inet_pton(AF_INET6,hostname,buf)) // ak je to ipv6
+      char bufferis[16];
+      if(inet_pton(AF_INET6,hostname,bufferis)) // ak je to ipv6
       {
         std::string input_for_niccz = ptripv6a;
         whois_nic_cz(input_for_niccz,client_socket,result);
@@ -519,29 +519,22 @@ cout << "======== DNS =========== "<<"\n";
         whois_nic_cz(input_for_niccz,client_socket,result);
         if(std::regex_search(input_for_niccz,m,std::regex("(www.)")) != true)// ak sa na vstupe nenachadza www
         {
-          cout<<"ajpk0"<<"\n";
-          cout<<input_domain_for_niccz<<"\n";
           strcpy(buf,input_domain_for_niccz); // domenu nakopirujeme do buffra
-          cout<<input_domain_for_niccz<<"\n";
-          cout<<"ja som bufer "<<buf<<"\n";
           strcat(buf,"\r\n");
-          cout<<input_domain_for_niccz<<"\n";
-          cout<<"ja som bufer zase "<<buf<<"\n";
           bytenasend = send(client_socket, buf, strlen(buf),0);
           if (bytenasend == -1)
           {
             perror("ERROR in sendto 270\n");
           }
-          cout<<"BBBB\n";
           if ((bytenasend = recv(client_socket,buf,BUFFER,MSG_WAITALL)) == -1)
           {  // MSG_WAITALL pri čitani sa čaká na všetky data
             err(1,"initial read() failed");
           }
           std::string inputwhoisnic = buf;
-          cout<<"AAAAAAAA\n";
           cout << "====== WHOIS  ===========\n";
           //  cout << input;
-          if(std::regex_search(inputwhoisnic,m,std::regex("(domain:)")) == true)
+          std::smatch matchbuf;
+          if(std::regex_search(inputwhoisnic,matchbuf,std::regex("(domain:)")) == true)
           {
             std::size_t position = inputwhoisnic.find("domain:"); // hladame domain preto od tadial chceme vystup
             std::string finaloutput = inputwhoisnic.substr(position);
@@ -551,11 +544,11 @@ cout << "======== DNS =========== "<<"\n";
           {
             cout<<"NO entries found "<<"\n";
             return EXIT_FAILURE;
-          }
-        }
-      }
+          } // ak nenajde domain
+        } // ak sa nenachdaza www
+      } //ak je to ipv4
 
-    }
+    } // al ke to whois.nic
 
     else // ak to neni whois.nic.cz ale nejaky iny whois server
     {
@@ -591,7 +584,6 @@ cout << "======== DNS =========== "<<"\n";
     }
     close(client_socket);
     freeaddrinfo(whois_infoptr);
-    cout<<"AAAAAAAAAAAAAAAAAAAAdsd\n";
     printf("\n\n* Closing client socket ...\n");
     return 0;
 }
